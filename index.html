@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Подход 1 vs Подход 2 vs Freedom24 · Top-10 акций и ETF</title>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --surface-2: #F1EFE8;
+    --text: #1A1A18;
+    --text-2: #5F5E5A;
+    --text-3: #888780;
+    --border: rgba(0,0,0,0.10);
+    --border-2: rgba(0,0,0,0.20);
+    --blue-fg: #185FA5;
+    --teal-fg: #0F6E56;
+    --amber-bg: #FAEEDA;
+    --amber-fg: #633806;
+    --amber-fg-dark: #412402;
+    --coral-bg: #F5C4B3;
+    --coral-fg: #712B13;
+    --red-bg: #F09595;
+    --red-fg: #501313;
+    --blue-bg: #E6F1FB;
+    --teal-bg: #E1F5EE;
+    --green: #0F6E56;
+    --red: #A32D2D;
+    --focus: rgba(55,138,221,0.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181816;
+      --surface: #232321;
+      --surface-2: #2C2C2A;
+      --text: #F1EFE8;
+      --text-2: #B4B2A9;
+      --text-3: #888780;
+      --border: rgba(255,255,255,0.10);
+      --border-2: rgba(255,255,255,0.22);
+      --blue-fg: #85B7EB;
+      --teal-fg: #5DCAA5;
+      --amber-bg: #412402;
+      --amber-fg: #FAC775;
+      --amber-fg-dark: #FAEEDA;
+      --coral-bg: #712B13;
+      --coral-fg: #F5C4B3;
+      --red-bg: #501313;
+      --red-fg: #F09595;
+      --blue-bg: #042C53;
+      --teal-bg: #04342C;
+      --green: #5DCAA5;
+      --red: #E24B4A;
+      --focus: rgba(133,183,235,0.40);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
+  body { padding: 24px 16px 48px; }
+  .wrap { max-width: 940px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; letter-spacing: -0.3px; }
+  .lead { font-size: 14px; color: var(--text-2); margin: 0 0 22px; line-height: 1.55; }
+  .tabs { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .lbl { font-size: 13px; color: var(--text-2); margin-right: 4px; min-width: 56px; }
+  .btn { padding: 7px 14px; font-size: 13px; border-radius: 8px; border: 0.5px solid var(--border); background: transparent; color: var(--text); font-weight: 500; cursor: pointer; font-family: inherit; transition: background 0.15s, border-color 0.15s; }
+  .btn:hover { background: var(--surface-2); }
+  .btn.on { background: var(--surface-2); border-color: var(--border-2); }
+  .btn.accent { border-color: var(--border-2); }
+  .toolbar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .status { font-size: 12px; color: var(--text-2); margin-left: 2px; }
+  .status.ok { color: var(--green); }
+  .status.err { color: var(--red); }
+  .edge { font-size: 13px; padding: 12px 14px; background: var(--amber-bg); color: var(--amber-fg); border-radius: 8px; margin: 14px 0 18px; line-height: 1.6; }
+  .edge strong { color: var(--amber-fg-dark); font-weight: 500; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+  .stat { background: var(--surface-2); border-radius: 8px; padding: 12px 14px; }
+  .stat-lbl { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500; margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.4px; }
+  .stat-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .thead, .row { display: grid; grid-template-columns: 58px 1fr 74px 74px 104px 68px 80px; gap: 8px; align-items: center; }
+  .thead { padding: 10px 12px; font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; border-bottom: 0.5px solid var(--border); background: var(--surface-2); }
+  .thead .r { text-align: right; }
+  .thead .c { text-align: center; }
+  .row { padding: 9px 12px; font-size: 13px; border-bottom: 0.5px solid var(--border); font-variant-numeric: tabular-nums; }
+  .row:last-child { border-bottom: none; }
+  .tk { font-weight: 500; color: var(--text); cursor: help; }
+  .nm { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pv { text-align: right; font-weight: 500; color: var(--text); }
+  .f24in { width: 100%; padding: 5px 7px; font-size: 13px; font-family: inherit; font-variant-numeric: tabular-nums; text-align: right; border: 0.5px solid var(--border-2); border-radius: 7px; background: var(--surface); color: var(--text); transition: box-shadow 0.12s, border-color 0.12s; -moz-appearance: textfield; }
+  .f24in::-webkit-outer-spin-button, .f24in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .f24in:focus { outline: none; border-color: transparent; box-shadow: 0 0 0 3px var(--focus); }
+  .f24in::placeholder { color: var(--text-3); }
+  .badge { font-size: 12px; font-weight: 500; text-align: center; padding: 3px 6px; border-radius: 7px; justify-self: stretch; }
+  .badge.none { color: var(--text-3); }
+  .badge.b1 { background: var(--blue-bg); color: var(--blue-fg); }
+  .badge.b2 { background: var(--teal-bg); color: var(--teal-fg); }
+  .badge.own { background: var(--red-bg); color: var(--red-fg); }
+  .delta { text-align: right; font-weight: 500; padding: 3px 8px; border-radius: 7px; justify-self: end; min-width: 76px; box-sizing: border-box; }
+  .delta.none { color: var(--text-3); }
+  .delta.ok { background: var(--teal-bg); color: var(--teal-fg); }
+  .delta.s1 { background: var(--amber-bg); color: var(--amber-fg); }
+  .delta.s2 { background: var(--coral-bg); color: var(--coral-fg); }
+  .delta.s3 { background: var(--red-bg); color: var(--red-fg); }
+  .foot { font-size: 12px; color: var(--text-2); padding: 16px 4px 0; line-height: 1.65; }
+  .foot b { color: var(--text); font-weight: 500; }
+  details.help { margin-top: 12px; }
+  details.help summary { font-size: 13px; color: var(--text-2); cursor: pointer; }
+  details.help .body { font-size: 13px; color: var(--text-2); line-height: 1.65; padding: 8px 2px 0; }
+  .csvfmt { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--surface-2); padding: 8px 10px; border-radius: 7px; display: inline-block; margin-top: 6px; color: var(--text); }
+  @media (max-width: 660px) {
+    body { padding: 16px 12px 32px; }
+    h1 { font-size: 19px; }
+    .stats { grid-template-columns: 1fr; }
+    .thead, .row { grid-template-columns: 52px 96px 64px 1fr; gap: 6px; padding: 9px 10px; font-size: 12px; }
+    .hide-mob { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Подход 1 vs Подход 2 vs Freedom24</h1>
+<p class="lead">Подход 1 — первая свеча в диапазоне (так строят график Yahoo, TradingView, Google). Подход 2 — последняя сессия до границы (IBKR, индустриальный стандарт); для расчёта перфоманса за период этот же подход используют Yahoo и TradingView, хотя график рисуют по Подходу 1. Freedom24 % вводится вручную с платформы, чтобы увидеть, к какой методике он ближе.</p>
+
+<div class="tabs">
+  <span class="lbl">Период:</span>
+  <button class="btn on" data-p="6M">6M · 27.11.2025 (День благодарения)</button>
+  <button class="btn" data-p="YTD">YTD · 01.01.2026 (Новый год)</button>
+</div>
+
+<div class="tabs">
+  <span class="lbl">Скоуп:</span>
+  <button class="btn on" data-s="all">Все</button>
+  <button class="btn" data-s="stock">Акции</button>
+  <button class="btn" data-s="etf">ETF</button>
+</div>
+
+<div class="toolbar">
+  <span class="lbl">Данные:</span>
+  <button class="btn accent" id="csv-up">Загрузить CSV с ценами</button>
+  <button class="btn" id="csv-tpl">Скачать шаблон CSV</button>
+  <button class="btn" id="snap">Сохранить общий index.html</button>
+  <button class="btn" id="f24-clr">Очистить Freedom24</button>
+  <input type="file" id="csv-file" accept=".csv,text/csv" style="display:none">
+  <span class="status" id="status"></span>
+</div>
+
+<div id="edge" class="edge">Граница 6M — <strong>27 ноября 2025, День благодарения, торгов нет</strong>. Подход 1 берёт первую сессию после границы (28.11, короткая сессия). Подход 2 — последнюю сессию до границы (26.11).</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-lbl">Среднее |Δ| П1↔П2</div><div class="stat-val" id="s-spread">1.37 п.п.</div><div class="stat-sub">расхождение методик</div></div>
+  <div class="stat"><div class="stat-lbl">Freedom24 заполнено</div><div class="stat-val" id="s-filled">5</div><div class="stat-sub">из <span id="s-total">5</span> тикеров</div></div>
+  <div class="stat"><div class="stat-lbl">Ближе к</div><div class="stat-val" id="s-match">1 / 1</div><div class="stat-sub">≈Подход 2 / ≈Подход 1</div></div>
+</div>
+
+<div class="card">
+  <div class="thead">
+    <span>Тикер</span>
+    <span class="hide-mob">Название</span>
+    <span class="r hide-mob">Подход 2</span>
+    <span class="r hide-mob">Подход 1</span>
+    <span class="c">Freedom24 %</span>
+    <span class="c">ближе к</span>
+    <span class="r">Δ к бл.</span>
+  </div>
+  <div id="list"></div>
+</div>
+
+<details class="help">
+  <summary>Как читать таблицу и формат CSV</summary>
+  <div class="body">
+    <p><b>Δ к бл.</b> — насколько введённый Freedom24 % отличается от ближайшего подхода. Зелёный (|Δ| ≤ 0.10 п.п.) — Freedom24 чисто совпадает с этим подходом. Жёлтый/красный — число не ложится ни на один подход, значит используется своя логика.</p>
+    <p><b>ближе к</b> — к какому из двух подходов введённое число ближе.</p>
+    <p>Наведите на тикер — во всплывающей подсказке опорные цены обоих подходов.</p>
+    <p><b>CSV с ценами закрытия</b> — заголовок и строки. Разделитель «,» или «;» определяется автоматически (для «;» десятичная запятая, как в Excel-RU). Распознаются колонки:</p>
+    <span class="csvfmt">ticker, n26, n28, d31, j02, now, f24_6m, f24_ytd</span>
+    <p style="margin-top:8px;">где n26 = закрытие 26.11.2025, n28 = 28.11.2025, d31 = 31.12.2025, j02 = 02.01.2026, now = текущая цена. Колонки f24_6m / f24_ytd необязательны — если заполнены, подставятся в Freedom24 %. После загрузки в таблице остаются только тикеры из CSV (в порядке файла) — позиции, которых нет в файле, убираются. Кнопка «Скачать шаблон CSV» выгружает текущие данные в этом формате — отредактируйте и залейте обратно.</p>
+    <p><b>Общий доступ для всех.</b> Цены и значения Freedom24, которые вы ввели или загрузили, по умолчанию хранятся только в вашем браузере. Чтобы их видел любой пользователь, нажмите <b>«Сохранить общий index.html»</b> — скачается самодостаточный файл с этими данными, уже встроенными как значения по умолчанию. Задеплойте его на Vercel/Netlify вместо текущего — и все, кто откроет ссылку, увидят ваши данные. Локальные правки каждого пользователя при этом накладываются поверх и не затрагивают общий файл.</p>
+  </div>
+</details>
+
+<p class="foot">Цены по умолчанию — иллюстративные, отражают реальные уровни мая 2026. Для точных расчётов загрузите CSV с фактическими закрытиями из вашего фида. Введённые вручную значения Freedom24 сохраняются в браузере (для каждого периода отдельно) и переживают перезагрузку при открытии файла как страницы.</p>
+
+</div>
+
+<script>
+const DATA = [{"tk":"NVDA","nm":"Nvidia","type":"stock","n26":180.26,"n28":177,"d31":186.5,"j02":188.85,"now":212.6},{"tk":"GOOGL","nm":"Alphabet","type":"stock","n26":319.95,"n28":320.18,"d31":313,"j02":315.15,"now":388.83},{"tk":"MSFT","nm":"Microsoft","type":"stock","n26":485.5,"n28":492.01,"d31":483.62,"j02":472.94,"now":412.67},{"tk":"AMZN","nm":"Amazon","type":"stock","n26":229.16,"n28":233.22,"d31":230.82,"j02":226.5,"now":271.85},{"tk":"AVGO","nm":"Broadcom","type":"stock","n26":397.57,"n28":402.96,"d31":346.1,"j02":347.62,"now":421.86}];
+
+const LS_KEY = 'f24_methodology_v2';
+const EMBEDDED_F24 = {"6M":{"NVDA":19.71,"GOOGL":19.51,"MSFT":-13.38,"AMZN":18.4,"AVGO":8.79},"YTD":{}};
+function loadF24() {
+  const base = { '6M': Object.assign({}, EMBEDDED_F24['6M'] || {}), 'YTD': Object.assign({}, EMBEDDED_F24['YTD'] || {}) };
+  try { const r = localStorage.getItem(LS_KEY); if (r) { const ls = JSON.parse(r); base['6M'] = Object.assign(base['6M'], ls['6M'] || {}); base['YTD'] = Object.assign(base['YTD'], ls['YTD'] || {}); } } catch (e) {}
+  return base;
+}
+function saveF24() { try { localStorage.setItem(LS_KEY, JSON.stringify(f24)); } catch (e) {} }
+let f24 = loadF24();
+
+let period = '6M';
+let scope = 'all';
+
+function refPrices(row) {
+  if (period === '6M') return { a2: row.n26, a1: row.n28 };
+  return { a2: row.d31, a1: row.j02 };
+}
+function fmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+function fmtSigned(v) { if (Math.abs(v) < 0.005) return '0.00'; return (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(2); }
+function deltaTier(absD) { if (absD <= 0.10) return 'ok'; if (absD <= 0.5) return 's1'; if (absD <= 1.2) return 's2'; return 's3'; }
+
+function scoped() {
+  let d = scope === 'all' ? DATA.slice() : DATA.filter(r => r.type === scope);
+  d = d.map(r => {
+    const { a2, a1 } = refPrices(r);
+    return { ref: r, a2, a1, c1: (r.now - a1) / a1 * 100, c2: (r.now - a2) / a2 * 100 };
+  });
+  d.forEach(o => { o.spread = o.c2 - o.c1; });
+  d.sort((x, y) => Math.abs(y.spread) - Math.abs(x.spread));
+  return d;
+}
+
+function computeRow(o) {
+  const v = f24[period][o.ref.tk];
+  const has = (v !== undefined && v !== null && !isNaN(v));
+  if (!has) return { has: false };
+  const dA1 = v - o.c1, dA2 = v - o.c2;
+  const closer = Math.abs(dA2) <= Math.abs(dA1) ? 2 : 1;
+  const gap = closer === 2 ? dA2 : dA1;
+  const owns = Math.min(Math.abs(dA1), Math.abs(dA2)) > 1.2;
+  return { has: true, v, dA1, dA2, closer, gap, owns };
+}
+
+function updateDerived(rowEl, o) {
+  const c = computeRow(o);
+  const badge = rowEl.querySelector('.badge');
+  const delta = rowEl.querySelector('.delta');
+  if (!c.has) {
+    badge.className = 'badge none'; badge.textContent = '—';
+    delta.className = 'delta none'; delta.textContent = '—';
+    return;
+  }
+  if (c.owns) { badge.className = 'badge own'; badge.textContent = 'своя'; }
+  else if (c.closer === 2) { badge.className = 'badge b2'; badge.textContent = '≈ П2'; }
+  else { badge.className = 'badge b1'; badge.textContent = '≈ П1'; }
+  delta.className = 'delta ' + deltaTier(Math.abs(c.gap));
+  delta.textContent = fmtSigned(c.gap);
+}
+
+function buildTable() {
+  const data = scoped();
+  const list = document.getElementById('list');
+  let html = '';
+  for (const o of data) {
+    const r = o.ref;
+    const v = f24[period][r.tk];
+    const val = (v !== undefined && v !== null && !isNaN(v)) ? v : '';
+    const title = r.tk + ' — Подход 2: $' + o.a2.toFixed(2) + ' (' + fmtPct(o.c2) + '), Подход 1: $' + o.a1.toFixed(2) + ' (' + fmtPct(o.c1) + ')';
+    html += '<div class="row" data-tk="' + r.tk + '">';
+    html += '<span class="tk" title="' + title + '">' + r.tk + '</span>';
+    html += '<span class="nm hide-mob">' + r.nm + '</span>';
+    html += '<span class="pv hide-mob">' + fmtPct(o.c2) + '</span>';
+    html += '<span class="pv hide-mob">' + fmtPct(o.c1) + '</span>';
+    html += '<input class="f24in" type="number" step="0.01" inputmode="decimal" placeholder="—" data-tk="' + r.tk + '" value="' + val + '">';
+    html += '<span class="badge none">—</span>';
+    html += '<span class="delta none">—</span>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+  data.forEach(o => {
+    const rowEl = list.querySelector('.row[data-tk="' + o.ref.tk + '"]');
+    updateDerived(rowEl, o);
+  });
+  updateStats();
+}
+
+function updateStats() {
+  const data = scoped();
+  const spreads = data.map(o => Math.abs(o.spread));
+  const avgSpread = spreads.length ? spreads.reduce((a, b) => a + b, 0) / spreads.length : 0;
+  let filled = 0, m1 = 0, m2 = 0;
+  data.forEach(o => {
+    const c = computeRow(o);
+    if (c.has) { filled++; if (!c.owns) { if (c.closer === 2) m2++; else m1++; } }
+  });
+  document.getElementById('s-spread').textContent = avgSpread.toFixed(2) + ' п.п.';
+  document.getElementById('s-filled').textContent = filled;
+  document.getElementById('s-total').textContent = data.length;
+  document.getElementById('s-match').textContent = m2 + ' / ' + m1;
+}
+
+function renderEdge() {
+  const edge = document.getElementById('edge');
+  if (period === '6M') {
+    edge.innerHTML = 'Граница 6M — <strong>27 ноября 2025, День благодарения, торгов нет</strong>. Подход 1 берёт первую сессию после границы (28.11, короткая сессия). Подход 2 — последнюю сессию до границы (26.11).';
+  } else {
+    edge.innerHTML = 'Граница YTD — <strong>1 января 2026, Новый год, торгов нет</strong>. Подход 1 берёт первую сессию после границы (02.01). Подход 2 — последнюю сессию до границы (31.12).';
+  }
+}
+
+function renderAll() { renderEdge(); buildTable(); }
+
+document.querySelectorAll('.btn[data-p]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.btn[data-p]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); period = b.dataset.p; renderAll();
+  });
+});
+document.querySelectorAll('.btn[data-s]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.btn[data-s]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); scope = b.dataset.s; renderAll();
+  });
+});
+
+document.getElementById('list').addEventListener('input', e => {
+  const inp = e.target;
+  if (!inp.classList.contains('f24in')) return;
+  const tk = inp.dataset.tk;
+  const raw = inp.value.trim();
+  if (raw === '') { delete f24[period][tk]; }
+  else { const num = parseFloat(raw.replace(',', '.')); if (!isNaN(num)) f24[period][tk] = num; else delete f24[period][tk]; }
+  saveF24();
+  const data = scoped();
+  const o = data.find(x => x.ref.tk === tk);
+  const rowEl = inp.closest('.row');
+  if (o && rowEl) updateDerived(rowEl, o);
+  updateStats();
+});
+
+const ALIASES = {
+  ticker: ['ticker', 'тикер', 'symbol', 'тикер ', 'sym'],
+  n26: ['n26', '26.11', '26.11.2025', 'nov26', '2025-11-26'],
+  n28: ['n28', '28.11', '28.11.2025', 'nov28', '2025-11-28'],
+  d31: ['d31', '31.12', '31.12.2025', 'dec31', '2025-12-31'],
+  j02: ['j02', '02.01', '02.01.2026', 'jan02', '2026-01-02', '2.01'],
+  now: ['now', 'current', 'тек', 'today', '2026-05-26', '26.05', '26.05.2026'],
+  f6: ['f24_6m', 'freedom_6m', 'f6m', 'freedom24_6m', 'f24 6m'],
+  fy: ['f24_ytd', 'freedom_ytd', 'fytd', 'freedom24_ytd', 'f24 ytd']
+};
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (cls ? ' ' + cls : '');
+}
+
+function parseCSV(text) {
+  text = text.replace(/\r/g, '');
+  const lines = text.split('\n').filter(l => l.trim().length);
+  if (!lines.length) throw new Error('пустой файл');
+  const semi = (lines[0].match(/;/g) || []).length;
+  const comm = (lines[0].match(/,/g) || []).length;
+  const delim = semi > comm ? ';' : ',';
+  const decComma = delim === ';';
+  const header = lines[0].split(delim).map(h => h.trim().toLowerCase());
+  const colIdx = key => { for (const a of ALIASES[key]) { const i = header.indexOf(a); if (i >= 0) return i; } return -1; };
+  const idx = { ticker: colIdx('ticker'), n26: colIdx('n26'), n28: colIdx('n28'), d31: colIdx('d31'), j02: colIdx('j02'), now: colIdx('now'), f6: colIdx('f6'), fy: colIdx('fy') };
+  if (idx.ticker < 0) throw new Error('нет колонки ticker');
+  const num = s => {
+    if (s == null) return null; s = String(s).trim(); if (!s) return null;
+    if (decComma) s = s.replace(/\./g, '').replace(',', '.'); else s = s.replace(/,/g, '');
+    const v = parseFloat(s); return isNaN(v) ? null : v;
+  };
+  let updated = 0, added = 0, rows = 0, removed = 0;
+  const kept = [];      // rows in CSV order
+  const csvTickers = new Set();
+  for (let i = 1; i < lines.length; i++) {
+    const cells = lines[i].split(delim);
+    const tk = (cells[idx.ticker] || '').trim().toUpperCase();
+    if (!tk || csvTickers.has(tk)) continue;
+    rows++;
+    csvTickers.add(tk);
+    let row = DATA.find(r => r.tk.toUpperCase() === tk);
+    if (!row) { row = { tk: tk, nm: tk, type: 'csv' }; added++; } else { updated++; }
+    const apply = (key, prop) => { if (idx[key] >= 0) { const val = num(cells[idx[key]]); if (val !== null) row[prop] = val; } };
+    apply('n26', 'n26'); apply('n28', 'n28'); apply('d31', 'd31'); apply('j02', 'j02'); apply('now', 'now');
+    if (idx.f6 >= 0) { const v = num(cells[idx.f6]); if (v !== null) f24['6M'][tk] = v; }
+    if (idx.fy >= 0) { const v = num(cells[idx.fy]); if (v !== null) f24['YTD'][tk] = v; }
+    kept.push(row);
+  }
+  // Оставляем в таблице только тикеры из CSV (в порядке файла)
+  removed = DATA.length - updated;
+  DATA.length = 0;
+  kept.forEach(r => DATA.push(r));
+  saveF24();
+  return { rows, updated, added, removed };
+}
+
+document.getElementById('csv-up').addEventListener('click', () => document.getElementById('csv-file').click());
+document.getElementById('csv-file').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const res = parseCSV(ev.target.result);
+      renderAll();
+      setStatus('Строк: ' + res.rows + ' · обновлено: ' + res.updated + ' · добавлено: ' + res.added + ' · убрано вне CSV: ' + res.removed, 'ok');
+    } catch (err) { setStatus('Ошибка: ' + err.message, 'err'); }
+  };
+  reader.onerror = () => setStatus('Не удалось прочитать файл', 'err');
+  reader.readAsText(file, 'utf-8');
+  e.target.value = '';
+});
+
+document.getElementById('csv-tpl').addEventListener('click', () => {
+  const head = ['ticker', 'name', 'n26', 'n28', 'd31', 'j02', 'now', 'f24_6m', 'f24_ytd'];
+  const lines = [head.join(',')];
+  for (const r of DATA) {
+    const f6 = f24['6M'][r.tk]; const fy = f24['YTD'][r.tk];
+    lines.push([
+      r.tk, '"' + r.nm + '"',
+      r.n26 != null ? r.n26 : '', r.n28 != null ? r.n28 : '',
+      r.d31 != null ? r.d31 : '', r.j02 != null ? r.j02 : '',
+      r.now != null ? r.now : '',
+      (f6 != null ? f6 : ''), (fy != null ? fy : '')
+    ].join(','));
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'methodology_prices_template.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setStatus('Шаблон выгружен', 'ok');
+  } catch (err) { setStatus('Скачивание недоступно в этом окружении', 'err'); }
+});
+
+document.getElementById('f24-clr').addEventListener('click', () => {
+  f24[period] = {}; saveF24(); buildTable();
+  setStatus('Freedom24 очищен для периода ' + period, 'ok');
+});
+
+document.getElementById('snap').addEventListener('click', () => {
+  const prevPeriod = period, prevScope = scope;
+  // Приводим UI к дефолтному состоянию, чтобы запечённый файл открывался единообразно
+  document.getElementById('list').innerHTML = '';
+  const st = document.getElementById('status'); st.textContent = ''; st.className = 'status';
+  document.querySelectorAll('.btn[data-p]').forEach(x => x.classList.toggle('on', x.dataset.p === '6M'));
+  document.querySelectorAll('.btn[data-s]').forEach(x => x.classList.toggle('on', x.dataset.s === 'all'));
+
+  let src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  // Запекаем текущие цены и значения Freedom24 как новые дефолты
+  src = src.replace(/const DATA = \[[\s\S]*?\];/, 'const DATA = ' + JSON.stringify(DATA) + ';');
+  src = src.replace(/const EMBEDDED_F24 = [^\n]*?;/, 'const EMBEDDED_F24 = ' + JSON.stringify(f24) + ';');
+
+  // Возвращаем живой вид к тому, что было до экспорта
+  period = prevPeriod; scope = prevScope;
+  document.querySelectorAll('.btn[data-p]').forEach(x => x.classList.toggle('on', x.dataset.p === period));
+  document.querySelectorAll('.btn[data-s]').forEach(x => x.classList.toggle('on', x.dataset.s === scope));
+  renderAll();
+
+  try {
+    const blob = new Blob([src], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'index.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setStatus('Готов общий index.html с данными внутри — задеплойте его, и данные увидят все', 'ok');
+  } catch (err) { setStatus('Скачивание недоступно в этом окружении', 'err'); }
+});
+
+renderAll();
+</script>
+
+
+</body></html>
