@@ -3,186 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Симуляция методологий — П2 vs П1 vs Freedom24</title>
+<title>Симуляция методологий — переход через праздники (6M)</title>
 <style>
 :root {
-  --bg: #FAFAF7; --surf: #FFFFFF; --surf2: #F1EFE8;
-  --text: #1A1A18; --text2: #5F5E5A; --text3: #888780;
-  --border: rgba(0,0,0,0.10); --border2: rgba(0,0,0,0.20);
-  --teal: #1D9E75; --teal-bg: #E1F5EE; --teal-text: #085041;
-  --blue: #378ADD; --blue-bg: #E6F1FB; --blue-text: #185FA5;
-  --amber: #EF9F27; --amber-bg: #FAEEDA; --amber-text: #633806;
-  --red: #A32D2D; --red-bg: #FCEBEB;
-  --danger-bg: #FCEBEB; --danger-border: #F09595; --danger-text: #A32D2D;
-  --green-ok: #0F6E56; --green-ok-bg: #E1F5EE;
-  --own-bg: #FCEBEB; --own-text: #A32D2D;
-  --radius: 8px; --radius-lg: 12px;
-  --mono: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+  --bg:#FAFAF7;--surf:#FFFFFF;--surf2:#F1EFE8;
+  --text:#1A1A18;--text2:#5F5E5A;--text3:#888780;
+  --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.20);
+  --teal:#1D9E75;--teal-bg:#E1F5EE;--teal-txt:#085041;
+  --blue:#378ADD;--blue-bg:#E6F1FB;--blue-txt:#185FA5;
+  --amber:#EF9F27;--amber-bg:#FAEEDA;--amber-txt:#633806;
+  --red:#A32D2D;--red-bg:#FCEBEB;
+  --danger-bg:#FCEBEB;--danger-brd:#F09595;--danger-txt:#A32D2D;
+  --warn-bg:#FAEEDA;--warn-brd:#EF9F27;--warn-txt:#633806;
+  --ok-bg:#E1F5EE;--ok-txt:#085041;
+  --own-bg:#FCEBEB;--own-txt:#A32D2D;
+  --mono:'SF Mono','Fira Code','Menlo',monospace;
+  --r:8px;--rl:12px;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #181816; --surf: #232321; --surf2: #2C2C2A;
-    --text: #F1EFE8; --text2: #B4B2A9; --text3: #888780;
-    --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.22);
-    --teal: #5DCAA5; --teal-bg: #04342C; --teal-text: #9FE1CB;
-    --blue: #85B7EB; --blue-bg: #042C53; --blue-text: #85B7EB;
-    --amber: #FAC775; --amber-bg: #412402; --amber-text: #FAC775;
-    --red: #E24B4A; --red-bg: #501313;
-    --danger-bg: #501313; --danger-border: #F09595; --danger-text: #F09595;
-    --green-ok: #5DCAA5; --green-ok-bg: #04342C;
-    --own-bg: #501313; --own-text: #F09595;
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#181816;--surf:#232321;--surf2:#2C2C2A;
+    --text:#F1EFE8;--text2:#B4B2A9;--text3:#888780;
+    --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.22);
+    --teal:#5DCAA5;--teal-bg:#04342C;--teal-txt:#9FE1CB;
+    --blue:#85B7EB;--blue-bg:#042C53;--blue-txt:#85B7EB;
+    --amber:#FAC775;--amber-bg:#412402;--amber-txt:#FAC775;
+    --red:#E24B4A;--red-bg:#501313;
+    --danger-bg:#501313;--danger-brd:#F09595;--danger-txt:#F09595;
+    --warn-bg:#412402;--warn-brd:#EF9F27;--warn-txt:#FAC775;
+    --ok-bg:#04342C;--ok-txt:#5DCAA5;
+    --own-bg:#501313;--own-txt:#F09595;
   }
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; font-size: 14px; line-height: 1.5; }
-body { padding: 24px 16px 56px; }
-.wrap { max-width: 860px; margin: 0 auto; }
-h1 { font-size: 20px; font-weight: 500; letter-spacing: -0.3px; margin-bottom: 4px; }
-.lead { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
-.row-btns { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-.lbl { font-size: 13px; color: var(--text2); }
-.btn { padding: 6px 15px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; color: var(--text2); font-size: 13px; cursor: pointer; font-family: inherit; transition: .15s; }
-.btn:hover { background: var(--surf2); }
-.btn.on { background: var(--surf2); border-color: var(--border2); color: var(--text); }
-.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
-.stat { background: var(--surf2); border-radius: var(--radius); padding: 12px 14px; }
-.stat-lbl { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
-.stat-val { font-size: 20px; font-weight: 500; font-family: var(--mono); color: var(--text); }
-.stat-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.callout { border: 0.5px solid var(--danger-border); background: var(--danger-bg); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--danger-text); margin-bottom: 14px; line-height: 1.6; }
-.callout strong { color: var(--danger-text); }
-.panel { border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden; }
-.panel-head { font-size: 12px; color: var(--text2); padding: 14px 14px 8px; }
-.platform-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
-.plat { background: var(--surf2); border-radius: var(--radius); padding: 12px 14px; }
-.plat-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
-.plat-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.plat-sub { font-size: 12px; color: var(--text2); margin-bottom: 2px; }
-.chart-wrap { padding: 16px; }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 12px; color: var(--text2); }
-.leg-item { display: flex; align-items: center; gap: 4px; }
-.leg-dot { width: 10px; height: 10px; border-radius: 2px; }
-canvas-wrap { position: relative; height: 280px; display: block; }
-.spread-wrap { padding: 16px; }
-.spread-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.spread-tk { width: 44px; font-size: 13px; font-weight: 500; font-family: var(--mono); color: var(--text); flex-shrink: 0; }
-.spread-bar-track { flex: 1; position: relative; height: 8px; background: var(--surf); border-radius: 4px; border: 0.5px solid var(--border); }
-.spread-bar-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
-.spread-center { position: absolute; top: -2px; bottom: -2px; left: 50%; width: 1px; background: var(--border2); }
-.spread-val { width: 72px; text-align: right; font-size: 12px; font-family: var(--mono); font-weight: 500; }
-.spread-note { font-size: 12px; color: var(--text3); margin-top: 8px; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead tr { background: var(--surf2); border-bottom: 0.5px solid var(--border); }
-th { padding: 9px 8px; font-weight: 500; font-size: 12px; color: var(--text2); }
-th:first-child { padding-left: 14px; text-align: left; }
-th:last-child { padding-right: 14px; }
-td { padding: 9px 8px; vertical-align: middle; }
-td:first-child { padding-left: 14px; }
-td:last-child { padding-right: 14px; }
-tr { border-bottom: 0.5px solid var(--border); }
-tr:last-child { border-bottom: none; }
-.tk-name { font-weight: 500; font-size: 14px; font-family: var(--mono); }
-.tk-sub { font-size: 12px; color: var(--text2); }
-.num { font-family: var(--mono); font-weight: 500; text-align: right; }
-.badge { font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; white-space: nowrap; }
-.badge-p2 { background: var(--teal-bg); color: var(--teal-text); }
-.badge-p1 { background: var(--blue-bg); color: var(--blue-text); }
-.badge-own { background: var(--own-bg); color: var(--own-text); }
-.delta-ok { background: var(--green-ok-bg); color: var(--green-ok); font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
-.delta-s1 { background: var(--amber-bg); color: var(--amber-text); font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
-.delta-s2 { background: #F5C4B3; color: #712B13; font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
-.delta-s3 { background: var(--red-bg); color: var(--red); font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
-@media (prefers-color-scheme: dark) {
-  .delta-s2 { background: #712B13; color: #F5C4B3; }
-}
-.foot { font-size: 12px; color: var(--text3); margin-top: 14px; line-height: 1.65; }
-@media (max-width: 600px) {
-  .stats, .platform-grid { grid-template-columns: 1fr; }
-  .hide-mob { display: none; }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;font-size:14px;line-height:1.5}
+body{padding:24px 16px 56px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:20px;font-weight:500;letter-spacing:-.3px;margin-bottom:4px}
+.lead{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.lbl{font-size:13px;color:var(--text2)}
+.btn{padding:6px 15px;border-radius:var(--r);border:.5px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:hover{background:var(--surf2)}
+.btn.on{background:var(--surf2);border-color:var(--border2);color:var(--text)}
+.btn.tk{font-family:var(--mono);font-weight:500}
+.key-note{border:.5px solid var(--warn-brd);background:var(--warn-bg);border-radius:var(--r);padding:11px 14px;font-size:13px;color:var(--warn-txt);line-height:1.65;margin-bottom:14px}
+.key-note strong{color:var(--warn-txt)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--surf2);border-radius:var(--r);padding:12px 14px}
+.stat-lbl{font-size:11px;color:var(--text2);margin-bottom:4px}
+.stat-val{font-size:20px;font-weight:500;font-family:var(--mono);color:var(--text)}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.callout{border:.5px solid var(--danger-brd);background:var(--danger-bg);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--danger-txt);margin-bottom:14px;line-height:1.6}
+.callout strong{color:var(--danger-txt)}
+.panel{border:.5px solid var(--border);border-radius:var(--rl);margin-bottom:14px;overflow:hidden}
+.panel-hd{font-size:12px;color:var(--text2);padding:14px 14px 8px}
+.panel-hd b{color:var(--text);font-weight:500}
+.tlw{padding:0 4px 4px}
+.tl-res{display:flex;gap:10px;flex-wrap:wrap;padding:4px 14px 16px}
+.rc{flex:1;min-width:150px;background:var(--surf2);border-radius:var(--r);padding:10px 12px;border:.5px solid var(--border)}
+.rc.p2{border-left:2px solid var(--teal)}
+.rc.p1{border-left:2px solid var(--blue)}
+.rc.dd{border-left:2px solid var(--text3)}
+.rc-lbl{font-size:11px;color:var(--text2);margin-bottom:4px}
+.rc-lbl .tag{margin-left:2px}
+.rc-px{font-family:var(--mono);font-size:13px;color:var(--text2)}
+.rc-pct{font-family:var(--mono);font-size:18px;font-weight:500;margin-top:2px}
+.rc-d{font-family:var(--mono);font-size:18px;font-weight:500;margin-top:2px}
+.rc-note{font-size:11px;color:var(--text2);margin-top:3px}
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.plat{background:var(--surf2);border-radius:var(--r);padding:12px 14px;border:.5px solid var(--border)}
+.plat-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.plat-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.plat-sub{font-size:12px;color:var(--text2);margin-bottom:3px}
+.tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;font-weight:500;white-space:nowrap}
+.tag-p{background:var(--teal-bg);color:var(--teal-txt)}
+.tag-g{background:var(--blue-bg);color:var(--blue-txt)}
+.warn-tag{font-size:11px;color:var(--warn-txt);margin-top:3px;display:inline-block}
+.chart-wrap{padding:16px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px;font-size:12px;color:var(--text2)}
+.leg{display:flex;align-items:center;gap:4px}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+.chart-note{margin-top:10px;font-size:12px;color:var(--text2);line-height:1.6;border-top:.5px solid var(--border);padding-top:10px}
+.spread-wrap{padding:16px}
+.srow{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:2px 4px;border-radius:6px}
+.srow.sel{background:var(--surf2)}
+.stk{width:50px;font-size:13px;font-weight:500;font-family:var(--mono);color:var(--text);flex-shrink:0;cursor:pointer}
+.strack{flex:1;position:relative;height:8px;background:var(--surf);border-radius:4px;border:.5px solid var(--border)}
+.sfill{position:absolute;top:0;bottom:0;border-radius:4px}
+.sctr{position:absolute;top:-2px;bottom:-2px;left:50%;width:1px;background:var(--border2)}
+.sval{width:80px;text-align:right;font-size:12px;font-family:var(--mono);font-weight:500}
+.snote{font-size:12px;color:var(--text3);margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--surf2);border-bottom:.5px solid var(--border)}
+th{padding:9px 8px;font-weight:500;font-size:12px;color:var(--text2)}
+th:first-child{padding-left:14px;text-align:left}
+th:last-child{padding-right:14px}
+td{padding:9px 8px;vertical-align:middle}
+td:first-child{padding-left:14px}
+td:last-child{padding-right:14px}
+tr{border-bottom:.5px solid var(--border)}
+tbody tr{cursor:pointer}
+tbody tr.sel{background:var(--surf2)}
+tr:last-child{border-bottom:none}
+.tk-n{font-weight:500;font-size:14px;font-family:var(--mono)}
+.tk-s{font-size:12px;color:var(--text2)}
+.num{font-family:var(--mono);font-weight:500;text-align:right}
+.badge{font-size:11px;padding:2px 7px;border-radius:5px;font-weight:500;white-space:nowrap}
+.b2{background:var(--teal-bg);color:var(--teal-txt)}
+.b1{background:var(--blue-bg);color:var(--blue-txt)}
+.bown{background:var(--own-bg);color:var(--own-txt)}
+.dok{background:var(--ok-bg);color:var(--ok-txt);font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;font-weight:500}
+.ds1{background:var(--amber-bg);color:var(--amber-txt);font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;font-weight:500}
+.ds2{background:#F5C4B3;color:#712B13;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;font-weight:500}
+.ds3{background:var(--red-bg);color:var(--red);font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;font-weight:500}
+@media(prefers-color-scheme:dark){.ds2{background:#712B13;color:#F5C4B3}}
+.foot{font-size:12px;color:var(--text3);margin-top:14px;line-height:1.65}
+@media(max-width:600px){.stats,.plat-grid{grid-template-columns:1fr}.hmob{display:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Симуляция методологий</h1>
-  <p class="lead">П2 (IBKR) — последняя торговая сессия до границы периода. П1 (Yahoo, Google, TradingView) — первая сессия после. Freedom24 — данные с платформы.</p>
+  <h1>Симуляция методологий — переход через праздники</h1>
+  <p class="lead">Период 6M, граница на 27.11.2025 (День благодарения). П2 (IBKR) — последняя торговая сессия <strong>до</strong> границы. П1 (Yahoo · Google · TradingView) — первая сессия <strong>после</strong>. Freedom24 — фактические данные с платформы. Ниже видно, от какой цены стартует каждый подход на двух праздничных переходах внутри периода — Дне благодарения и новогоднем кластере — и к какой доходности это приводит.</p>
 
-  <div class="row-btns">
-    <span class="lbl">Период:</span>
-    <button class="btn on" id="b6m" onclick="sp('6M')">6M · День благодарения</button>
-    <button class="btn" id="bY" onclick="sp('YTD')">YTD · Новый год</button>
+  <div class="key-note">
+    ⚠ <strong>Ключевой момент:</strong> Yahoo Finance и TradingView <em>рисуют график</em> от первой свечи после праздника (П1), но <strong>% доходности за период считают де-факто по П2</strong> — от последнего закрытия до праздника, как IBKR. Подпись «+X%» совпадает с П2, а не с тем, что показывает их собственный график.
+  </div>
+
+  <div class="row">
+    <span class="lbl">Тикер:</span>
+    <span id="tkbtns"></span>
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="stat-lbl">Среднее |Δ| П1↔П2</div><div class="stat-val" id="ss">—</div><div class="stat-sub">расхождение методик</div></div>
+    <div class="stat"><div class="stat-lbl">Среднее |Δ| П1↔П2</div><div class="stat-val" id="ss">—</div><div class="stat-sub">расхождение методик (6M)</div></div>
     <div class="stat"><div class="stat-lbl">Freedom24 заполнено</div><div class="stat-val" id="sf">—</div><div class="stat-sub">тикеров с данными</div></div>
     <div class="stat"><div class="stat-lbl">F24 ближе к</div><div class="stat-val" id="sm">—</div><div class="stat-sub">П2 / П1</div></div>
   </div>
 
-  <div class="callout" id="cl"></div>
-
-  <div class="panel">
-    <div class="panel-head">Выбор опорной сессии — как каждый подход определяет точку отсчёта</div>
-    <div id="tlw" style="padding:0 4px 10px"></div>
+  <div class="callout">
+    <strong>Граница периода 6M:</strong> 27 ноября 2025, День благодарения — торгов нет. П2 берёт закрытие <strong>26.11.2025</strong>, П1 — <strong>28.11.2025</strong> (короткая сессия). Внутри периода есть и второй праздничный разрыв — <strong>новогодний кластер</strong> (Рождество 25.12 + Новый год 01.01), где закрыто несколько дней подряд и расхождение опорных точек шире.
   </div>
 
-  <div class="platform-grid">
+  <div class="panel">
+    <div class="panel-hd"><b>Переход 1 — граница периода:</b> День благодарения (27.11.2025), закрыт 1 день</div>
+    <div class="tlw" id="tl-thx"></div>
+    <div class="tl-res" id="res-thx"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd"><b>Переход 2 — праздничный кластер внутри периода:</b> Рождество + Новый год (граница 01.01.2026), закрыто несколько дней подряд</div>
+    <div class="tlw" id="tl-ny"></div>
+    <div class="tl-res" id="res-ny"></div>
+  </div>
+
+  <div class="plat-grid">
     <div class="plat">
       <div class="plat-name"><span class="plat-dot" style="background:var(--teal)"></span>Подход 2</div>
-      <div class="plat-sub">Последняя сессия до границы</div>
-      <div class="plat-sub">IBKR · индустриальный стандарт</div>
+      <div class="plat-sub">Последняя сессия <strong>до</strong> границы</div>
+      <div class="plat-sub" style="margin-bottom:6px">IBKR · индустриальный стандарт</div>
+      <div style="font-size:11px;color:var(--text2)"><span class="tag tag-p">расчёт %</span> IBKR · Yahoo · TV · Google</div>
     </div>
-    <div class="plat">
+    <div class="plat" style="border-color:var(--blue)">
       <div class="plat-name"><span class="plat-dot" style="background:var(--blue)"></span>Подход 1</div>
-      <div class="plat-sub">Первая сессия после границы</div>
-      <div class="plat-sub">Yahoo · Google · TradingView</div>
+      <div class="plat-sub">Первая сессия <strong>после</strong> границы</div>
+      <div class="plat-sub" style="margin-bottom:6px">Yahoo · Google · TradingView</div>
+      <div style="font-size:11px;color:var(--text2)"><span class="tag tag-g">график</span> Yahoo · TV · Google</div>
+      <div class="warn-tag">⚠ но не для расчёта %!</div>
     </div>
     <div class="plat">
       <div class="plat-name"><span class="plat-dot" style="background:var(--amber)"></span>Freedom24</div>
-      <div class="plat-sub">Вводится вручную с платформы</div>
+      <div class="plat-sub">Фактические данные с платформы</div>
       <div class="plat-sub">Какому подходу соответствует?</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="chart-wrap">
-      <div class="panel-head" style="padding:0 0 8px">Доходность за период по методологиям (%)</div>
+      <div class="panel-hd" style="padding:0 0 8px">Доходность за 6M по методологиям (%)</div>
       <div class="legend">
-        <span class="leg-item"><span class="leg-dot" style="background:var(--teal)"></span>П2 — IBKR</span>
-        <span class="leg-item"><span class="leg-dot" style="background:var(--blue)"></span>П1 — Yahoo / Google / TV</span>
-        <span class="leg-item" id="f24leg"><span class="leg-dot" style="background:var(--amber)"></span>Freedom24</span>
+        <span class="leg"><span class="leg-dot" style="background:var(--teal)"></span>П2 — IBKR <span class="tag tag-p" style="margin-left:4px">расчёт % у Yahoo · TV</span></span>
+        <span class="leg"><span class="leg-dot" style="background:var(--blue)"></span>П1 — <span class="tag tag-g" style="margin-left:4px">только график</span> Yahoo · TV</span>
+        <span class="leg"><span class="leg-dot" style="background:var(--amber)"></span>Freedom24</span>
       </div>
-      <div style="position:relative;height:280px">
-        <canvas id="pc"></canvas>
-      </div>
+      <div style="position:relative;height:280px"><canvas id="pc"></canvas></div>
+      <div class="chart-note">Зелёные столбцы (П2) — именно те цифры доходности, что вы видите на Yahoo Finance и TradingView, хотя их графики стартуют от первой свечи после праздника.</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="spread-wrap">
-      <div class="panel-head" style="padding:0 0 12px">Спред методик: П2 − П1 (процентных пункта)</div>
+      <div class="panel-hd" style="padding:0 0 12px">Спред методик за 6M: П2 − П1 (процентных пункта)</div>
       <div id="sbars"></div>
-      <div class="spread-note">Положительный → П2 даёт доходность выше. Отрицательный → П1 выше.</div>
+      <div class="snote">Положительный → П2 даёт доходность выше. Отрицательный → П1 выше. Клик по тикеру выбирает его выше.</div>
     </div>
   </div>
 
   <div class="panel">
     <table>
-      <thead>
-        <tr>
-          <th style="text-align:left">Тикер</th>
-          <th style="text-align:right;color:var(--teal-text)">П2 %</th>
-          <th style="text-align:right;color:var(--blue-text)">П1 %</th>
-          <th style="text-align:right;color:var(--amber-text)">F24 %</th>
-          <th style="text-align:center" class="hide-mob">Ближе к</th>
-          <th style="text-align:right">Δ к бл.</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th>Тикер</th>
+        <th style="text-align:right;color:var(--teal-txt)">П2 % <span style="font-size:10px;opacity:.7">(IBKR·Yahoo·TV)</span></th>
+        <th style="text-align:right;color:var(--blue-txt)">П1 % <span style="font-size:10px;opacity:.7">(граф.)</span></th>
+        <th style="text-align:right;color:var(--amber-txt)">F24 %</th>
+        <th style="text-align:center" class="hmob">Ближе к</th>
+        <th style="text-align:right">Δ к бл.</th>
+      </tr></thead>
       <tbody id="tb"></tbody>
     </table>
   </div>
 
-  <div class="foot">Цены по состоянию на май 2026. Δ = F24 минус ближайший подход: зелёный ≤0.10 п.п. · жёлтый ≤0.50 · оранжевый ≤1.20 · красный >1.20. «Своя» = разница с обоими подходами >1.2 п.п.</div>
+  <div class="foot">Цены по состоянию на май 2026, доходность 6M считается от границы 27.11.2025. Новогодний переход показан как второй пример работы того же правила выбора опорной сессии (граница 01.01.2026) — расхождение там шире из-за длинного праздничного кластера. Δ = F24 минус ближайший подход: зелёный ≤0.10 п.п. · жёлтый ≤0.50 · оранжевый ≤1.20 · красный >1.20. «Своя» = разница с обоими >1.2 п.п.</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -194,237 +226,177 @@ const STOCKS=[
   {tk:'AMZN',nm:'Amazon',   n26:229.16,n28:233.22,d31:230.82,j02:226.50,now:271.85},
   {tk:'AVGO',nm:'Broadcom', n26:397.57,n28:402.96,d31:346.10,j02:347.62,now:421.86},
 ];
-const F24={'6M':{NVDA:19.71,GOOGL:19.51,MSFT:-13.38,AMZN:18.40,AVGO:8.79},'YTD':{}};
-const isDark=matchMedia('(prefers-color-scheme: dark)').matches;
-const getVar=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const F24={NVDA:19.71,GOOGL:19.51,MSFT:-13.38,AMZN:18.40,AVGO:8.79};
+let sel='NVDA';
 
-function pct(now,base){return +((now-base)/base*100).toFixed(2);}
-function fmt(v){return v===null?'—':((v>=0?'+':'')+v.toFixed(2)+'%');}
+function pct(n,b){return +((n-b)/b*100).toFixed(2);}
+function fmt(v){return v===null||v===undefined?'—':((v>=0?'+':'')+v.toFixed(2)+'%');}
+function dk(){return matchMedia('(prefers-color-scheme:dark)').matches;}
 
-function getData(p){
+function getData(){
   return STOCKS.map(r=>{
-    const a2=p==='6M'?r.n26:r.d31, a1=p==='6M'?r.n28:r.j02;
-    const p2=pct(r.now,a2), p1=pct(r.now,a1);
-    const f24r=F24[p][r.tk], f24=(f24r!==undefined&&f24r!==null)?f24r:null;
-    const d2=f24!==null?+(f24-p2).toFixed(2):null;
-    const d1=f24!==null?+(f24-p1).toFixed(2):null;
+    const p2=pct(r.now,r.n26),p1=pct(r.now,r.n28);
+    const f24r=F24[r.tk],f24=(f24r!==undefined&&f24r!==null)?f24r:null;
+    const d2=f24!==null?+(f24-p2).toFixed(2):null,d1=f24!==null?+(f24-p1).toFixed(2):null;
     const closer=(d2!==null&&d1!==null)?(Math.abs(d2)<=Math.abs(d1)?2:1):null;
     const own=closer!==null&&Math.min(Math.abs(d2),Math.abs(d1))>1.2;
-    const cd=closer===2?d2:d1;
-    return{tk:r.tk,nm:r.nm,p2,p1,f24,d2,d1,closer,own,cd,spread:+(p2-p1).toFixed(2)};
+    return{tk:r.tk,nm:r.nm,p2,p1,f24,d2,d1,closer,own,cd:closer===2?d2:d1,spread:+(p2-p1).toFixed(2)};
   });
 }
 
-const TL6=`<svg width="100%" viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <style>
-    .tl-line{stroke:#888780;stroke-width:1}
-    .tl-zone{fill:#FCEBEB;stroke:#F09595;stroke-width:0.5}
-    .tl-dot-n{fill:#F1EFE8;stroke:#888780;stroke-width:0.5}
-    .tl-dot-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:1.5}
-    .tl-dot-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:1.5}
-    .tl-dot-bnd{fill:#FCEBEB;stroke:#A32D2D;stroke-width:1.5}
-    .tl-badge-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:0.5}
-    .tl-badge-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:0.5}
-    .tl-txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#5F5E5A}
-    .tl-txt-p2{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#085041}
-    .tl-txt-p1{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#185FA5}
-    .tl-txt-bnd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#A32D2D}
-    .tl-ldr{stroke:#888780;stroke-width:0.5;stroke-dasharray:3,2;fill:none}
-    @media(prefers-color-scheme:dark){
-      .tl-zone{fill:#501313;stroke:#F09595}
-      .tl-dot-n{fill:#2C2C2A;stroke:#888780}
-      .tl-dot-p2{fill:#04342C;stroke:#5DCAA5}
-      .tl-dot-p1{fill:#042C53;stroke:#85B7EB}
-      .tl-dot-bnd{fill:#501313;stroke:#E24B4A}
-      .tl-badge-p2{fill:#04342C;stroke:#5DCAA5}
-      .tl-badge-p1{fill:#042C53;stroke:#85B7EB}
-      .tl-txt{fill:#888780}
-      .tl-txt-p2{fill:#9FE1CB}
-      .tl-txt-p1{fill:#85B7EB}
-      .tl-txt-bnd{fill:#F09595}
-      .tl-ldr{stroke:#5F5E5A}
-      .tl-line{stroke:#5F5E5A}
+/* ---------- Timeline SVG ---------- */
+function tlSVG(cfg){
+  const r=STOCKS.find(s=>s.tk===sel);
+  let zones='';
+  for(const z of cfg.zones){ zones+=`<rect x="${z.x}" y="30" width="${z.w}" height="118" rx="4" class="tl-zone"/>`; }
+  let breaks='';
+  for(const b of (cfg.breaks||[])){ breaks+=`<line x1="${b}" y1="92" x2="${b+10}" y2="84"/><line x1="${b+6}" y1="100" x2="${b+16}" y2="92" class="tl-line"/>`; }
+  let out=`<svg width="100%" viewBox="0 0 680 168" xmlns="http://www.w3.org/2000/svg"><defs><style>
+.tl-line{stroke:#888780;stroke-width:1}.tl-zone{fill:#FCEBEB;stroke:#F09595;stroke-width:.5}
+.tl-n{fill:#F1EFE8;stroke:#888780;stroke-width:.5}.tl-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:1.5}
+.tl-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:1.5}.tl-bnd{fill:#FCEBEB;stroke:#A32D2D;stroke-width:1.5}
+.tl-bp2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:.5}.tl-bp1{fill:#E6F1FB;stroke:#185FA5;stroke-width:.5}
+.tt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px}
+.tt-n{fill:#5F5E5A}.tt-p2{fill:#085041}.tt-p1{fill:#185FA5}.tt-bnd{fill:#A32D2D}
+.tt-px{font-family:'SF Mono','Menlo',monospace;font-size:11px;font-weight:600}
+.tl-ldr{stroke:#888780;stroke-width:.5;stroke-dasharray:3,2;fill:none}
+@media(prefers-color-scheme:dark){
+.tl-zone{fill:#501313;stroke:#F09595}.tl-n{fill:#2C2C2A;stroke:#888780}
+.tl-p2{fill:#04342C;stroke:#5DCAA5}.tl-p1{fill:#042C53;stroke:#85B7EB}.tl-bnd{fill:#501313;stroke:#E24B4A}
+.tl-bp2{fill:#04342C;stroke:#5DCAA5}.tl-bp1{fill:#042C53;stroke:#85B7EB}
+.tt-n{fill:#888780}.tt-p2{fill:#9FE1CB}.tt-p1{fill:#85B7EB}.tt-bnd{fill:#F09595}.tl-ldr{stroke:#5F5E5A}.tl-line{stroke:#5F5E5A}}
+</style></defs>
+<line class="tl-line" x1="40" y1="96" x2="640" y2="96"/>${zones}${breaks}`;
+  for(const nd of cfg.nodes){
+    const {x,date,day,type,label,lw,note,pxKey}=nd;
+    if(type==='n'){
+      out+=`<circle class="tl-n" cx="${x}" cy="96" r="6"/>`;
+      out+=`<text class="tt tt-n" x="${x}" y="115" text-anchor="middle">${date}</text>`;
+      out+=`<text class="tt tt-n" x="${x}" y="129" text-anchor="middle">${day}</text>`;
+    } else if(type==='p2'||type==='p1'){
+      const isP2=type==='p2';
+      const cls=isP2?'p2':'p1', bcls=isP2?'bp2':'bp1';
+      const rx=x-lw/2;
+      const px=r[pxKey];
+      out+=`<line class="tl-ldr" x1="${x}" y1="79" x2="${x}" y2="66"/>`;
+      out+=`<rect class="tl-${bcls}" x="${rx}" y="48" width="${lw}" height="18" rx="4"/>`;
+      out+=`<text class="tt tt-${cls}" x="${x}" y="57" text-anchor="middle" dominant-baseline="central">${label}</text>`;
+      out+=`<circle class="tl-${cls}" cx="${x}" cy="96" r="11"/>`;
+      out+=`<text class="tt tt-${cls}" x="${x}" y="115" text-anchor="middle">${date} ${day}</text>`;
+      out+=`<text class="tt tt-${cls} tt-px" x="${x}" y="131" text-anchor="middle">$${px.toFixed(2)}</text>`;
+      if(note) out+=`<text class="tt tt-n" x="${x}" y="144" text-anchor="middle" font-size="10">${note}</text>`;
+    } else if(type==='bnd'){
+      out+=`<circle class="tl-bnd" cx="${x}" cy="96" r="10"/>`;
+      out+=`<text class="tt tt-bnd" x="${x}" y="96" text-anchor="middle" dominant-baseline="central" font-size="13">✕</text>`;
+      out+=`<text class="tt tt-bnd" x="${x}" y="115" text-anchor="middle">${date}</text>`;
+      out+=`<text class="tt tt-bnd" x="${x}" y="129" text-anchor="middle">${day}</text>`;
+      if(note) out+=`<text class="tt tt-bnd" x="${x}" y="143" text-anchor="middle" font-size="10">${note}</text>`;
     }
-  </style>
-</defs>
-<line class="tl-line" x1="40" y1="88" x2="640" y2="88"/>
-<rect class="tl-zone" x="368" y="26" width="56" height="132" rx="4"/>
-<circle class="tl-dot-n" cx="58" cy="88" r="6"/>
-<text class="tl-txt" x="58" y="107" text-anchor="middle">24/11</text>
-<text class="tl-txt" x="58" y="121" text-anchor="middle">Пн</text>
-<circle class="tl-dot-n" cx="170" cy="88" r="6"/>
-<text class="tl-txt" x="170" y="107" text-anchor="middle">25/11</text>
-<text class="tl-txt" x="170" y="121" text-anchor="middle">Вт</text>
-<line class="tl-ldr" x1="282" y1="71" x2="282" y2="60"/>
-<rect class="tl-badge-p2" x="240" y="42" width="84" height="18" rx="4"/>
-<text class="tl-txt-p2" x="282" y="54" text-anchor="middle" dominant-baseline="central">П2 · IBKR</text>
-<circle class="tl-dot-p2" cx="282" cy="88" r="10"/>
-<text class="tl-txt-p2" x="282" y="107" text-anchor="middle">26/11</text>
-<text class="tl-txt-p2" x="282" y="121" text-anchor="middle">Ср</text>
-<circle class="tl-dot-bnd" cx="396" cy="88" r="10"/>
-<text class="tl-txt-bnd" x="396" y="88" text-anchor="middle" dominant-baseline="central" font-size="13">✕</text>
-<text class="tl-txt-bnd" x="396" y="107" text-anchor="middle">27/11</text>
-<text class="tl-txt-bnd" x="396" y="121" text-anchor="middle">Чт</text>
-<text class="tl-txt-bnd" x="396" y="138" text-anchor="middle">нет торгов</text>
-<line class="tl-ldr" x1="510" y1="71" x2="510" y2="60"/>
-<rect class="tl-badge-p1" x="448" y="42" width="124" height="18" rx="4"/>
-<text class="tl-txt-p1" x="510" y="54" text-anchor="middle" dominant-baseline="central">П1 · Yahoo · TV</text>
-<circle class="tl-dot-p1" cx="510" cy="88" r="10"/>
-<text class="tl-txt-p1" x="510" y="107" text-anchor="middle">28/11</text>
-<text class="tl-txt-p1" x="510" y="121" text-anchor="middle">Пт</text>
-<circle class="tl-dot-n" cx="622" cy="88" r="6"/>
-<text class="tl-txt" x="622" y="107" text-anchor="middle">01/12</text>
-<text class="tl-txt" x="622" y="121" text-anchor="middle">Пн</text>
-</svg>`;
-
-const TLY=`<svg width="100%" viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <style>
-    .tl-line{stroke:#888780;stroke-width:1}
-    .tl-zone{fill:#FCEBEB;stroke:#F09595;stroke-width:0.5}
-    .tl-dot-n{fill:#F1EFE8;stroke:#888780;stroke-width:0.5}
-    .tl-dot-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:1.5}
-    .tl-dot-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:1.5}
-    .tl-dot-bnd{fill:#FCEBEB;stroke:#A32D2D;stroke-width:1.5}
-    .tl-badge-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:0.5}
-    .tl-badge-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:0.5}
-    .tl-txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#5F5E5A}
-    .tl-txt-p2{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#085041}
-    .tl-txt-p1{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#185FA5}
-    .tl-txt-bnd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#A32D2D}
-    .tl-ldr{stroke:#888780;stroke-width:0.5;stroke-dasharray:3,2;fill:none}
-    @media(prefers-color-scheme:dark){
-      .tl-zone{fill:#501313;stroke:#F09595}
-      .tl-dot-n{fill:#2C2C2A;stroke:#888780}
-      .tl-dot-p2{fill:#04342C;stroke:#5DCAA5}
-      .tl-dot-p1{fill:#042C53;stroke:#85B7EB}
-      .tl-dot-bnd{fill:#501313;stroke:#E24B4A}
-      .tl-badge-p2{fill:#04342C;stroke:#5DCAA5}
-      .tl-badge-p1{fill:#042C53;stroke:#85B7EB}
-      .tl-txt{fill:#888780}
-      .tl-txt-p2{fill:#9FE1CB}
-      .tl-txt-p1{fill:#85B7EB}
-      .tl-txt-bnd{fill:#F09595}
-      .tl-ldr{stroke:#5F5E5A}
-      .tl-line{stroke:#5F5E5A}
-    }
-  </style>
-</defs>
-<line class="tl-line" x1="40" y1="88" x2="640" y2="88"/>
-<rect class="tl-zone" x="308" y="26" width="64" height="132" rx="4"/>
-<circle class="tl-dot-n" cx="78" cy="88" r="6"/>
-<text class="tl-txt" x="78" y="107" text-anchor="middle">30/12</text>
-<text class="tl-txt" x="78" y="121" text-anchor="middle">Вт</text>
-<line class="tl-ldr" x1="208" y1="71" x2="208" y2="60"/>
-<rect class="tl-badge-p2" x="166" y="42" width="84" height="18" rx="4"/>
-<text class="tl-txt-p2" x="208" y="54" text-anchor="middle" dominant-baseline="central">П2 · IBKR</text>
-<circle class="tl-dot-p2" cx="208" cy="88" r="10"/>
-<text class="tl-txt-p2" x="208" y="107" text-anchor="middle">31/12</text>
-<text class="tl-txt-p2" x="208" y="121" text-anchor="middle">Ср</text>
-<circle class="tl-dot-bnd" cx="340" cy="88" r="10"/>
-<text class="tl-txt-bnd" x="340" y="88" text-anchor="middle" dominant-baseline="central" font-size="13">✕</text>
-<text class="tl-txt-bnd" x="340" y="107" text-anchor="middle">01/01</text>
-<text class="tl-txt-bnd" x="340" y="121" text-anchor="middle">Чт</text>
-<text class="tl-txt-bnd" x="340" y="138" text-anchor="middle">нет торгов</text>
-<line class="tl-ldr" x1="472" y1="71" x2="472" y2="60"/>
-<rect class="tl-badge-p1" x="410" y="42" width="124" height="18" rx="4"/>
-<text class="tl-txt-p1" x="472" y="54" text-anchor="middle" dominant-baseline="central">П1 · Yahoo · TV</text>
-<circle class="tl-dot-p1" cx="472" cy="88" r="10"/>
-<text class="tl-txt-p1" x="472" y="107" text-anchor="middle">02/01</text>
-<text class="tl-txt-p1" x="472" y="121" text-anchor="middle">Пт</text>
-<circle class="tl-dot-n" cx="604" cy="88" r="6"/>
-<text class="tl-txt" x="604" y="107" text-anchor="middle">05/01</text>
-<text class="tl-txt" x="604" y="121" text-anchor="middle">Пн</text>
-</svg>`;
-
-let chart=null;
-
-function getColors(){
-  const dark=matchMedia('(prefers-color-scheme:dark)').matches;
-  return{
-    p2:dark?'#5DCAA5':'#1D9E75',
-    p1:dark?'#85B7EB':'#378ADD',
-    f24:dark?'#FAC775':'#EF9F27',
-    grid:dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)',
-    tick:dark?'#888780':'#5F5E5A',
-  };
+  }
+  out+='</svg>';
+  return out;
 }
 
+const CFG_THX={
+  zones:[{x:350,w:60}],
+  nodes:[
+    {x:70, date:'24/11',day:'Пн',type:'n'},
+    {x:175,date:'25/11',day:'Вт',type:'n'},
+    {x:285,date:'26/11',day:'Ср',type:'p2',pxKey:'n26',label:'П2 · IBKR · Yahoo% · TV%',lw:150},
+    {x:380,date:'27/11',day:'Чт',type:'bnd',note:'День благодарения'},
+    {x:480,date:'28/11',day:'Пт',type:'p1',pxKey:'n28',label:'П1 · график Yahoo · TV',lw:142,note:'короткая сессия'},
+    {x:600,date:'01/12',day:'Пн',type:'n'},
+  ]
+};
+const CFG_NY={
+  zones:[{x:52,w:36},{x:405,w:60}],
+  breaks:[150],
+  nodes:[
+    {x:70, date:'25/12',day:'Чт',type:'bnd',note:'Рождество'},
+    {x:235,date:'30/12',day:'Вт',type:'n'},
+    {x:345,date:'31/12',day:'Ср',type:'p2',pxKey:'d31',label:'П2 · IBKR · Yahoo% · TV%',lw:150},
+    {x:435,date:'01/01',day:'Чт',type:'bnd',note:'Новый год'},
+    {x:540,date:'02/01',day:'Пт',type:'p1',pxKey:'j02',label:'П1 · график Yahoo · TV',lw:142},
+    {x:620,date:'05/01',day:'Пн',type:'n'},
+  ]
+};
+
+function resStrip(elId,p2key,p1key,dates,extraNote){
+  const r=STOCKS.find(s=>s.tk===sel);
+  const a2=r[p2key],a1=r[p1key];
+  const c2=pct(r.now,a2),c1=pct(r.now,a1);
+  const d=+(c2-c1).toFixed(2);
+  const D=dk();
+  const c2col=c2>=0?(D?'#5DCAA5':'#0F6E56'):(D?'#E24B4A':'#A32D2D');
+  const c1col=c1>=0?(D?'#85B7EB':'#185FA5'):(D?'#E24B4A':'#A32D2D');
+  const a=Math.abs(d);
+  const dcol=a<=0.5?(D?'#5DCAA5':'#1D9E75'):a<=1.5?(D?'#FAC775':'#854F0B'):(D?'#E24B4A':'#A32D2D');
+  document.getElementById(elId).innerHTML=
+    `<div class="rc p2"><div class="rc-lbl">П2 — опора ${dates[0]} <span class="tag tag-p">IBKR·Yahoo%·TV%</span></div><div class="rc-px">$${a2.toFixed(2)} → $${r.now.toFixed(2)}</div><div class="rc-pct" style="color:${c2col}">${fmt(c2)}</div></div>`+
+    `<div class="rc p1"><div class="rc-lbl">П1 — опора ${dates[1]} <span class="tag tag-g">только график</span></div><div class="rc-px">$${a1.toFixed(2)} → $${r.now.toFixed(2)}</div><div class="rc-pct" style="color:${c1col}">${fmt(c1)}</div></div>`+
+    `<div class="rc dd"><div class="rc-lbl">Расхождение П2 − П1</div><div class="rc-d" style="color:${dcol}">${d>0?'+':''}${d.toFixed(2)} п.п.</div><div class="rc-note">${extraNote}</div></div>`;
+}
+
+/* ---------- Chart ---------- */
+function getColors(){
+  const d=dk();
+  return{p2:d?'#5DCAA5':'#1D9E75',p1:d?'#85B7EB':'#378ADD',f24:d?'#FAC775':'#EF9F27',grid:d?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)',tick:d?'#888780':'#5F5E5A'};
+}
+let chart=null;
 function renderChart(data){
   const C=getColors();
-  const labels=data.map(d=>d.tk);
+  const selIdx=data.findIndex(d=>d.tk===sel);
+  const bw=data.map((d,i)=>i===selIdx?2.5:1);
   const ds=[
-    {label:'П2 — IBKR',data:data.map(d=>d.p2),backgroundColor:C.p2+'bb',borderColor:C.p2,borderWidth:1,borderRadius:3},
-    {label:'П1 — Yahoo/TV',data:data.map(d=>d.p1),backgroundColor:C.p1+'bb',borderColor:C.p1,borderWidth:1,borderRadius:3},
-    {label:'Freedom24',data:data.map(d=>d.f24),backgroundColor:C.f24+'bb',borderColor:C.f24,borderWidth:1,borderRadius:3},
+    {label:'П2',data:data.map(d=>d.p2),backgroundColor:C.p2+'bb',borderColor:C.p2,borderWidth:bw,borderRadius:3},
+    {label:'П1',data:data.map(d=>d.p1),backgroundColor:C.p1+'bb',borderColor:C.p1,borderWidth:bw,borderRadius:3},
+    {label:'Freedom24',data:data.map(d=>d.f24),backgroundColor:C.f24+'bb',borderColor:C.f24,borderWidth:bw,borderRadius:3},
   ];
-  if(chart){chart.data.labels=labels;chart.data.datasets=ds;chart.update();return;}
+  if(chart){chart.data.labels=data.map(d=>d.tk);chart.data.datasets=ds;chart.update();return;}
   chart=new Chart(document.getElementById('pc'),{
-    type:'bar',data:{labels,datasets:ds},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:c=>{const v=c.raw;return c.dataset.label+': '+(v===null?'—':((v>=0?'+':'')+v.toFixed(2)+'%'));}}}
-      },
-      scales:{
-        x:{grid:{display:false},ticks:{color:C.tick,font:{size:13}},border:{display:false}},
-        y:{grid:{color:C.grid},ticks:{color:C.tick,font:{size:11},callback:v=>(v>=0?'+':'')+v+'%'},border:{display:false}}
-      }
-    }
+    type:'bar',data:{labels:data.map(d=>d.tk),datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:(e,els)=>{if(els.length){selT(data[els[0].index].tk);}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const v=c.raw;return c.dataset.label+': '+(v===null?'—':((v>=0?'+':'')+v.toFixed(2)+'%'));}}}},
+      scales:{x:{grid:{display:false},ticks:{color:C.tick,font:{size:13}},border:{display:false}},
+              y:{grid:{color:C.grid},ticks:{color:C.tick,font:{size:11},callback:v=>(v>=0?'+':'')+v+'%'},border:{display:false}}}}
   });
 }
 
 function renderSpreads(data){
-  const dark=matchMedia('(prefers-color-scheme:dark)').matches;
-  const mx=Math.max(...data.map(d=>Math.abs(d.spread)))||1;
-  document.getElementById('sbars').innerHTML=data.map(d=>{
-    const w=Math.abs(d.spread)/mx*46;
-    const isPos=d.spread>=0;
-    const abs=Math.abs(d.spread);
-    const col=abs<=0.5?(dark?'#5DCAA5':'#1D9E75'):abs<=1.5?(dark?'#FAC775':'#EF9F27'):(dark?'#E24B4A':'#A32D2D');
-    return `<div class="spread-row">
-      <span class="spread-tk">${d.tk}</span>
-      <div class="spread-bar-track">
-        <div class="spread-bar-fill" style="${isPos?'left:50%':'right:50%'};width:${w}%;background:${col}"></div>
-        <div class="spread-center"></div>
-      </div>
-      <span class="spread-val" style="color:${col}">${d.spread>0?'+':''}${d.spread.toFixed(2)} п.п.</span>
-    </div>`;
+  const d=dk();
+  const mx=Math.max(...data.map(x=>Math.abs(x.spread)))||1;
+  document.getElementById('sbars').innerHTML=data.map(x=>{
+    const w=Math.abs(x.spread)/mx*46,isP=x.spread>=0,a=Math.abs(x.spread);
+    const c=a<=0.5?(d?'#5DCAA5':'#1D9E75'):a<=1.5?(d?'#FAC775':'#EF9F27'):(d?'#E24B4A':'#A32D2D');
+    return `<div class="srow${x.tk===sel?' sel':''}"><span class="stk" onclick="selT('${x.tk}')">${x.tk}</span><div class="strack"><div class="sfill" style="${isP?'left:50%':'right:50%'};width:${w}%;background:${c}"></div><div class="sctr"></div></div><span class="sval" style="color:${c}">${x.spread>0?'+':''}${x.spread.toFixed(2)} п.п.</span></div>`;
   }).join('');
 }
 
-function deltaSpan(v){
+function dBadge(v){
   if(v===null)return '<span style="color:var(--text3)">—</span>';
-  const a=Math.abs(v);
-  const cls=a<=0.1?'delta-ok':a<=0.5?'delta-s1':a<=1.2?'delta-s2':'delta-s3';
-  return `<span class="${cls}">${v>0?'+':''}${v.toFixed(2)}</span>`;
+  const a=Math.abs(v),cls=a<=0.1?'dok':a<=0.5?'ds1':a<=1.2?'ds2':'ds3';
+  return `<span class="badge ${cls}">${v>0?'+':''}${v.toFixed(2)}</span>`;
 }
-
-function closerSpan(d){
+function cBadge(d){
   if(d.f24===null)return '<span style="color:var(--text3)">—</span>';
-  if(d.own)return '<span class="badge badge-own">своя</span>';
-  return d.closer===2?'<span class="badge badge-p2">≈ П2</span>':'<span class="badge badge-p1">≈ П1</span>';
+  if(d.own)return '<span class="badge bown">своя</span>';
+  return d.closer===2?'<span class="badge b2">≈ П2</span>':'<span class="badge b1">≈ П1</span>';
 }
-
 function renderTable(data){
-  document.getElementById('tb').innerHTML=data.map((d,i)=>{
-    const dark=matchMedia('(prefers-color-scheme:dark)').matches;
-    const p2c=d.p2>=0?(dark?'#5DCAA5':'#0F6E56'):(dark?'#E24B4A':'#A32D2D');
-    const p1c=d.p1>=0?(dark?'#85B7EB':'#185FA5'):(dark?'#E24B4A':'#A32D2D');
-    const f24c=d.f24===null?'var(--text3)':d.f24>=0?(dark?'#FAC775':'#854F0B'):(dark?'#E24B4A':'#A32D2D');
-    return `<tr>
-      <td><div class="tk-name">${d.tk}</div><div class="tk-sub">${d.nm}</div></td>
+  const D=dk();
+  document.getElementById('tb').innerHTML=data.map(d=>{
+    const p2c=d.p2>=0?(D?'#5DCAA5':'#0F6E56'):(D?'#E24B4A':'#A32D2D');
+    const p1c=d.p1>=0?(D?'#85B7EB':'#185FA5'):(D?'#E24B4A':'#A32D2D');
+    const f24c=d.f24===null?'var(--text3)':d.f24>=0?(D?'#FAC775':'#854F0B'):(D?'#E24B4A':'#A32D2D');
+    return `<tr class="${d.tk===sel?'sel':''}" onclick="selT('${d.tk}')"><td><div class="tk-n">${d.tk}</div><div class="tk-s">${d.nm}</div></td>
       <td class="num" style="color:${p2c}">${fmt(d.p2)}</td>
       <td class="num" style="color:${p1c}">${fmt(d.p1)}</td>
       <td class="num" style="color:${f24c}">${fmt(d.f24)}</td>
-      <td style="text-align:center" class="hide-mob">${closerSpan(d)}</td>
-      <td style="text-align:right">${deltaSpan(d.own?null:d.cd)}</td>
-    </tr>`;
+      <td style="text-align:center" class="hmob">${cBadge(d)}</td>
+      <td style="text-align:right">${dBadge(d.own?null:d.cd)}</td></tr>`;
   }).join('');
 }
-
 function renderStats(data){
   const avg=(data.reduce((s,d)=>s+Math.abs(d.spread),0)/data.length).toFixed(2);
   const filled=data.filter(d=>d.f24!==null).length;
@@ -435,19 +407,24 @@ function renderStats(data){
   document.getElementById('sm').textContent=m2+' / '+m1;
 }
 
-function sp(p){
-  document.getElementById('b6m').classList.toggle('on',p==='6M');
-  document.getElementById('bY').classList.toggle('on',p==='YTD');
-  document.getElementById('cl').innerHTML=p==='6M'
-    ?'<strong>Граница 6M:</strong> 27 ноября 2025, День благодарения — торгов нет.<br>П2 берёт закрытие <strong>26.11.2025</strong> (последняя сессия до праздника). П1 берёт <strong>28.11.2025</strong> (первая сессия после, укороченная).'
-    :'<strong>Граница YTD:</strong> 1 января 2026, Новый год — торгов нет.<br>П2 берёт закрытие <strong>31.12.2025</strong> (последняя сессия до праздника). П1 берёт <strong>02.01.2026</strong> (первая сессия после).';
-  document.getElementById('tlw').innerHTML=p==='6M'?TL6:TLY;
-  document.getElementById('f24leg').style.opacity=p==='6M'?'1':'0.4';
-  const data=getData(p);
-  renderStats(data); renderChart(data); renderSpreads(data); renderTable(data);
+function renderTkBtns(){
+  document.getElementById('tkbtns').innerHTML=STOCKS.map(s=>
+    `<button class="btn tk${s.tk===sel?' on':''}" onclick="selT('${s.tk}')">${s.tk}</button>`
+  ).join(' ');
 }
 
-sp('6M');
+function render(){
+  renderTkBtns();
+  document.getElementById('tl-thx').innerHTML=tlSVG(CFG_THX);
+  document.getElementById('tl-ny').innerHTML=tlSVG(CFG_NY);
+  resStrip('res-thx','n26','n28',['26.11','28.11'],'1 закрытый день — узкий разрыв.');
+  resStrip('res-ny','d31','j02',['31.12','02.01'],'Длинный праздничный кластер — разрыв шире.');
+  const data=getData();
+  renderStats(data);renderChart(data);renderSpreads(data);renderTable(data);
+}
+function selT(tk){ sel=tk; render(); }
+
+render();
 </script>
 </body>
 </html>
