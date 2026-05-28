@@ -1,468 +1,453 @@
 <!DOCTYPE html>
-<html lang="ru"><head>
+<html lang="ru">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Подход 1 vs Подход 2 vs Freedom24 · Top-10 акций и ETF</title>
+<title>Симуляция методологий — П2 vs П1 vs Freedom24</title>
 <style>
+:root {
+  --bg: #FAFAF7; --surf: #FFFFFF; --surf2: #F1EFE8;
+  --text: #1A1A18; --text2: #5F5E5A; --text3: #888780;
+  --border: rgba(0,0,0,0.10); --border2: rgba(0,0,0,0.20);
+  --teal: #1D9E75; --teal-bg: #E1F5EE; --teal-text: #085041;
+  --blue: #378ADD; --blue-bg: #E6F1FB; --blue-text: #185FA5;
+  --amber: #EF9F27; --amber-bg: #FAEEDA; --amber-text: #633806;
+  --red: #A32D2D; --red-bg: #FCEBEB;
+  --danger-bg: #FCEBEB; --danger-border: #F09595; --danger-text: #A32D2D;
+  --green-ok: #0F6E56; --green-ok-bg: #E1F5EE;
+  --own-bg: #FCEBEB; --own-text: #A32D2D;
+  --radius: 8px; --radius-lg: 12px;
+  --mono: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #FAFAF7;
-    --surface: #FFFFFF;
-    --surface-2: #F1EFE8;
-    --text: #1A1A18;
-    --text-2: #5F5E5A;
-    --text-3: #888780;
-    --border: rgba(0,0,0,0.10);
-    --border-2: rgba(0,0,0,0.20);
-    --blue-fg: #185FA5;
-    --teal-fg: #0F6E56;
-    --amber-bg: #FAEEDA;
-    --amber-fg: #633806;
-    --amber-fg-dark: #412402;
-    --coral-bg: #F5C4B3;
-    --coral-fg: #712B13;
-    --red-bg: #F09595;
-    --red-fg: #501313;
-    --blue-bg: #E6F1FB;
-    --teal-bg: #E1F5EE;
-    --green: #0F6E56;
-    --red: #A32D2D;
-    --focus: rgba(55,138,221,0.35);
+    --bg: #181816; --surf: #232321; --surf2: #2C2C2A;
+    --text: #F1EFE8; --text2: #B4B2A9; --text3: #888780;
+    --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.22);
+    --teal: #5DCAA5; --teal-bg: #04342C; --teal-text: #9FE1CB;
+    --blue: #85B7EB; --blue-bg: #042C53; --blue-text: #85B7EB;
+    --amber: #FAC775; --amber-bg: #412402; --amber-text: #FAC775;
+    --red: #E24B4A; --red-bg: #501313;
+    --danger-bg: #501313; --danger-border: #F09595; --danger-text: #F09595;
+    --green-ok: #5DCAA5; --green-ok-bg: #04342C;
+    --own-bg: #501313; --own-text: #F09595;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181816;
-      --surface: #232321;
-      --surface-2: #2C2C2A;
-      --text: #F1EFE8;
-      --text-2: #B4B2A9;
-      --text-3: #888780;
-      --border: rgba(255,255,255,0.10);
-      --border-2: rgba(255,255,255,0.22);
-      --blue-fg: #85B7EB;
-      --teal-fg: #5DCAA5;
-      --amber-bg: #412402;
-      --amber-fg: #FAC775;
-      --amber-fg-dark: #FAEEDA;
-      --coral-bg: #712B13;
-      --coral-fg: #F5C4B3;
-      --red-bg: #501313;
-      --red-fg: #F09595;
-      --blue-bg: #042C53;
-      --teal-bg: #04342C;
-      --green: #5DCAA5;
-      --red: #E24B4A;
-      --focus: rgba(133,183,235,0.40);
-    }
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
-  body { padding: 24px 16px 48px; }
-  .wrap { max-width: 940px; margin: 0 auto; }
-  h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; letter-spacing: -0.3px; }
-  .lead { font-size: 14px; color: var(--text-2); margin: 0 0 22px; line-height: 1.55; }
-  .tabs { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
-  .lbl { font-size: 13px; color: var(--text-2); margin-right: 4px; min-width: 56px; }
-  .btn { padding: 7px 14px; font-size: 13px; border-radius: 8px; border: 0.5px solid var(--border); background: transparent; color: var(--text); font-weight: 500; cursor: pointer; font-family: inherit; transition: background 0.15s, border-color 0.15s; }
-  .btn:hover { background: var(--surface-2); }
-  .btn.on { background: var(--surface-2); border-color: var(--border-2); }
-  .btn.accent { border-color: var(--border-2); }
-  .toolbar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
-  .status { font-size: 12px; color: var(--text-2); margin-left: 2px; }
-  .status.ok { color: var(--green); }
-  .status.err { color: var(--red); }
-  .edge { font-size: 13px; padding: 12px 14px; background: var(--amber-bg); color: var(--amber-fg); border-radius: 8px; margin: 14px 0 18px; line-height: 1.6; }
-  .edge strong { color: var(--amber-fg-dark); font-weight: 500; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
-  .stat { background: var(--surface-2); border-radius: 8px; padding: 12px 14px; }
-  .stat-lbl { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500; margin-bottom: 4px; }
-  .stat-val { font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.4px; }
-  .stat-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
-  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .thead, .row { display: grid; grid-template-columns: 58px 1fr 74px 74px 104px 68px 80px; gap: 8px; align-items: center; }
-  .thead { padding: 10px 12px; font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; border-bottom: 0.5px solid var(--border); background: var(--surface-2); }
-  .thead .r { text-align: right; }
-  .thead .c { text-align: center; }
-  .row { padding: 9px 12px; font-size: 13px; border-bottom: 0.5px solid var(--border); font-variant-numeric: tabular-nums; }
-  .row:last-child { border-bottom: none; }
-  .tk { font-weight: 500; color: var(--text); cursor: help; }
-  .nm { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pv { text-align: right; font-weight: 500; color: var(--text); }
-  .f24in { width: 100%; padding: 5px 7px; font-size: 13px; font-family: inherit; font-variant-numeric: tabular-nums; text-align: right; border: 0.5px solid var(--border-2); border-radius: 7px; background: var(--surface); color: var(--text); transition: box-shadow 0.12s, border-color 0.12s; -moz-appearance: textfield; }
-  .f24in::-webkit-outer-spin-button, .f24in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .f24in:focus { outline: none; border-color: transparent; box-shadow: 0 0 0 3px var(--focus); }
-  .f24in::placeholder { color: var(--text-3); }
-  .badge { font-size: 12px; font-weight: 500; text-align: center; padding: 3px 6px; border-radius: 7px; justify-self: stretch; }
-  .badge.none { color: var(--text-3); }
-  .badge.b1 { background: var(--blue-bg); color: var(--blue-fg); }
-  .badge.b2 { background: var(--teal-bg); color: var(--teal-fg); }
-  .badge.own { background: var(--red-bg); color: var(--red-fg); }
-  .delta { text-align: right; font-weight: 500; padding: 3px 8px; border-radius: 7px; justify-self: end; min-width: 76px; box-sizing: border-box; }
-  .delta.none { color: var(--text-3); }
-  .delta.ok { background: var(--teal-bg); color: var(--teal-fg); }
-  .delta.s1 { background: var(--amber-bg); color: var(--amber-fg); }
-  .delta.s2 { background: var(--coral-bg); color: var(--coral-fg); }
-  .delta.s3 { background: var(--red-bg); color: var(--red-fg); }
-  .foot { font-size: 12px; color: var(--text-2); padding: 16px 4px 0; line-height: 1.65; }
-  .foot b { color: var(--text); font-weight: 500; }
-  details.help { margin-top: 12px; }
-  details.help summary { font-size: 13px; color: var(--text-2); cursor: pointer; }
-  details.help .body { font-size: 13px; color: var(--text-2); line-height: 1.65; padding: 8px 2px 0; }
-  .csvfmt { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--surface-2); padding: 8px 10px; border-radius: 7px; display: inline-block; margin-top: 6px; color: var(--text); }
-  @media (max-width: 660px) {
-    body { padding: 16px 12px 32px; }
-    h1 { font-size: 19px; }
-    .stats { grid-template-columns: 1fr; }
-    .thead, .row { grid-template-columns: 52px 96px 64px 1fr; gap: 6px; padding: 9px 10px; font-size: 12px; }
-    .hide-mob { display: none; }
-  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; font-size: 14px; line-height: 1.5; }
+body { padding: 24px 16px 56px; }
+.wrap { max-width: 860px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 500; letter-spacing: -0.3px; margin-bottom: 4px; }
+.lead { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+.row-btns { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.lbl { font-size: 13px; color: var(--text2); }
+.btn { padding: 6px 15px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; color: var(--text2); font-size: 13px; cursor: pointer; font-family: inherit; transition: .15s; }
+.btn:hover { background: var(--surf2); }
+.btn.on { background: var(--surf2); border-color: var(--border2); color: var(--text); }
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+.stat { background: var(--surf2); border-radius: var(--radius); padding: 12px 14px; }
+.stat-lbl { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+.stat-val { font-size: 20px; font-weight: 500; font-family: var(--mono); color: var(--text); }
+.stat-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.callout { border: 0.5px solid var(--danger-border); background: var(--danger-bg); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--danger-text); margin-bottom: 14px; line-height: 1.6; }
+.callout strong { color: var(--danger-text); }
+.panel { border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden; }
+.panel-head { font-size: 12px; color: var(--text2); padding: 14px 14px 8px; }
+.platform-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+.plat { background: var(--surf2); border-radius: var(--radius); padding: 12px 14px; }
+.plat-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.plat-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.plat-sub { font-size: 12px; color: var(--text2); margin-bottom: 2px; }
+.chart-wrap { padding: 16px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 12px; color: var(--text2); }
+.leg-item { display: flex; align-items: center; gap: 4px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+canvas-wrap { position: relative; height: 280px; display: block; }
+.spread-wrap { padding: 16px; }
+.spread-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.spread-tk { width: 44px; font-size: 13px; font-weight: 500; font-family: var(--mono); color: var(--text); flex-shrink: 0; }
+.spread-bar-track { flex: 1; position: relative; height: 8px; background: var(--surf); border-radius: 4px; border: 0.5px solid var(--border); }
+.spread-bar-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.spread-center { position: absolute; top: -2px; bottom: -2px; left: 50%; width: 1px; background: var(--border2); }
+.spread-val { width: 72px; text-align: right; font-size: 12px; font-family: var(--mono); font-weight: 500; }
+.spread-note { font-size: 12px; color: var(--text3); margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: var(--surf2); border-bottom: 0.5px solid var(--border); }
+th { padding: 9px 8px; font-weight: 500; font-size: 12px; color: var(--text2); }
+th:first-child { padding-left: 14px; text-align: left; }
+th:last-child { padding-right: 14px; }
+td { padding: 9px 8px; vertical-align: middle; }
+td:first-child { padding-left: 14px; }
+td:last-child { padding-right: 14px; }
+tr { border-bottom: 0.5px solid var(--border); }
+tr:last-child { border-bottom: none; }
+.tk-name { font-weight: 500; font-size: 14px; font-family: var(--mono); }
+.tk-sub { font-size: 12px; color: var(--text2); }
+.num { font-family: var(--mono); font-weight: 500; text-align: right; }
+.badge { font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; white-space: nowrap; }
+.badge-p2 { background: var(--teal-bg); color: var(--teal-text); }
+.badge-p1 { background: var(--blue-bg); color: var(--blue-text); }
+.badge-own { background: var(--own-bg); color: var(--own-text); }
+.delta-ok { background: var(--green-ok-bg); color: var(--green-ok); font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
+.delta-s1 { background: var(--amber-bg); color: var(--amber-text); font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
+.delta-s2 { background: #F5C4B3; color: #712B13; font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
+.delta-s3 { background: var(--red-bg); color: var(--red); font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; font-weight: 500; }
+@media (prefers-color-scheme: dark) {
+  .delta-s2 { background: #712B13; color: #F5C4B3; }
+}
+.foot { font-size: 12px; color: var(--text3); margin-top: 14px; line-height: 1.65; }
+@media (max-width: 600px) {
+  .stats, .platform-grid { grid-template-columns: 1fr; }
+  .hide-mob { display: none; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <h1>Симуляция методологий</h1>
+  <p class="lead">П2 (IBKR) — последняя торговая сессия до границы периода. П1 (Yahoo, Google, TradingView) — первая сессия после. Freedom24 — данные с платформы.</p>
 
-<h1>Подход 1 vs Подход 2 vs Freedom24</h1>
-<p class="lead">Подход 1 — первая свеча в диапазоне (так строят график Yahoo, TradingView, Google). Подход 2 — последняя сессия до границы (IBKR, индустриальный стандарт); для расчёта перфоманса за период этот же подход используют Yahoo и TradingView, хотя график рисуют по Подходу 1. Freedom24 % вводится вручную с платформы, чтобы увидеть, к какой методике он ближе.</p>
-
-<div class="tabs">
-  <span class="lbl">Период:</span>
-  <button class="btn on" data-p="6M">6M · 27.11.2025 (День благодарения)</button>
-  <button class="btn" data-p="YTD">YTD · 01.01.2026 (Новый год)</button>
-</div>
-
-<div class="tabs">
-  <span class="lbl">Скоуп:</span>
-  <button class="btn on" data-s="all">Все</button>
-  <button class="btn" data-s="stock">Акции</button>
-  <button class="btn" data-s="etf">ETF</button>
-</div>
-
-<div class="toolbar">
-  <span class="lbl">Данные:</span>
-  <button class="btn accent" id="csv-up">Загрузить CSV с ценами</button>
-  <button class="btn" id="csv-tpl">Скачать шаблон CSV</button>
-  <button class="btn" id="snap">Сохранить общий index.html</button>
-  <button class="btn" id="f24-clr">Очистить Freedom24</button>
-  <input type="file" id="csv-file" accept=".csv,text/csv" style="display:none">
-  <span class="status" id="status"></span>
-</div>
-
-<div id="edge" class="edge">Граница 6M — <strong>27 ноября 2025, День благодарения, торгов нет</strong>. Подход 1 берёт первую сессию после границы (28.11, короткая сессия). Подход 2 — последнюю сессию до границы (26.11).</div>
-
-<div class="stats">
-  <div class="stat"><div class="stat-lbl">Среднее |Δ| П1↔П2</div><div class="stat-val" id="s-spread">1.37 п.п.</div><div class="stat-sub">расхождение методик</div></div>
-  <div class="stat"><div class="stat-lbl">Freedom24 заполнено</div><div class="stat-val" id="s-filled">5</div><div class="stat-sub">из <span id="s-total">5</span> тикеров</div></div>
-  <div class="stat"><div class="stat-lbl">Ближе к</div><div class="stat-val" id="s-match">1 / 1</div><div class="stat-sub">≈Подход 2 / ≈Подход 1</div></div>
-</div>
-
-<div class="card">
-  <div class="thead">
-    <span>Тикер</span>
-    <span class="hide-mob">Название</span>
-    <span class="r hide-mob">Подход 2</span>
-    <span class="r hide-mob">Подход 1</span>
-    <span class="c">Freedom24 %</span>
-    <span class="c">ближе к</span>
-    <span class="r">Δ к бл.</span>
+  <div class="row-btns">
+    <span class="lbl">Период:</span>
+    <button class="btn on" id="b6m" onclick="sp('6M')">6M · День благодарения</button>
+    <button class="btn" id="bY" onclick="sp('YTD')">YTD · Новый год</button>
   </div>
-  <div id="list"></div>
-</div>
 
-<details class="help">
-  <summary>Как читать таблицу и формат CSV</summary>
-  <div class="body">
-    <p><b>Δ к бл.</b> — насколько введённый Freedom24 % отличается от ближайшего подхода. Зелёный (|Δ| ≤ 0.10 п.п.) — Freedom24 чисто совпадает с этим подходом. Жёлтый/красный — число не ложится ни на один подход, значит используется своя логика.</p>
-    <p><b>ближе к</b> — к какому из двух подходов введённое число ближе.</p>
-    <p>Наведите на тикер — во всплывающей подсказке опорные цены обоих подходов.</p>
-    <p><b>CSV с ценами закрытия</b> — заголовок и строки. Разделитель «,» или «;» определяется автоматически (для «;» десятичная запятая, как в Excel-RU). Распознаются колонки:</p>
-    <span class="csvfmt">ticker, n26, n28, d31, j02, now, f24_6m, f24_ytd</span>
-    <p style="margin-top:8px;">где n26 = закрытие 26.11.2025, n28 = 28.11.2025, d31 = 31.12.2025, j02 = 02.01.2026, now = текущая цена. Колонки f24_6m / f24_ytd необязательны — если заполнены, подставятся в Freedom24 %. После загрузки в таблице остаются только тикеры из CSV (в порядке файла) — позиции, которых нет в файле, убираются. Кнопка «Скачать шаблон CSV» выгружает текущие данные в этом формате — отредактируйте и залейте обратно.</p>
-    <p><b>Общий доступ для всех.</b> Цены и значения Freedom24, которые вы ввели или загрузили, по умолчанию хранятся только в вашем браузере. Чтобы их видел любой пользователь, нажмите <b>«Сохранить общий index.html»</b> — скачается самодостаточный файл с этими данными, уже встроенными как значения по умолчанию. Задеплойте его на Vercel/Netlify вместо текущего — и все, кто откроет ссылку, увидят ваши данные. Локальные правки каждого пользователя при этом накладываются поверх и не затрагивают общий файл.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-lbl">Среднее |Δ| П1↔П2</div><div class="stat-val" id="ss">—</div><div class="stat-sub">расхождение методик</div></div>
+    <div class="stat"><div class="stat-lbl">Freedom24 заполнено</div><div class="stat-val" id="sf">—</div><div class="stat-sub">тикеров с данными</div></div>
+    <div class="stat"><div class="stat-lbl">F24 ближе к</div><div class="stat-val" id="sm">—</div><div class="stat-sub">П2 / П1</div></div>
   </div>
-</details>
 
-<p class="foot">Цены по умолчанию — иллюстративные, отражают реальные уровни мая 2026. Для точных расчётов загрузите CSV с фактическими закрытиями из вашего фида. Введённые вручную значения Freedom24 сохраняются в браузере (для каждого периода отдельно) и переживают перезагрузку при открытии файла как страницы.</p>
+  <div class="callout" id="cl"></div>
 
+  <div class="panel">
+    <div class="panel-head">Выбор опорной сессии — как каждый подход определяет точку отсчёта</div>
+    <div id="tlw" style="padding:0 4px 10px"></div>
+  </div>
+
+  <div class="platform-grid">
+    <div class="plat">
+      <div class="plat-name"><span class="plat-dot" style="background:var(--teal)"></span>Подход 2</div>
+      <div class="plat-sub">Последняя сессия до границы</div>
+      <div class="plat-sub">IBKR · индустриальный стандарт</div>
+    </div>
+    <div class="plat">
+      <div class="plat-name"><span class="plat-dot" style="background:var(--blue)"></span>Подход 1</div>
+      <div class="plat-sub">Первая сессия после границы</div>
+      <div class="plat-sub">Yahoo · Google · TradingView</div>
+    </div>
+    <div class="plat">
+      <div class="plat-name"><span class="plat-dot" style="background:var(--amber)"></span>Freedom24</div>
+      <div class="plat-sub">Вводится вручную с платформы</div>
+      <div class="plat-sub">Какому подходу соответствует?</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="chart-wrap">
+      <div class="panel-head" style="padding:0 0 8px">Доходность за период по методологиям (%)</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-dot" style="background:var(--teal)"></span>П2 — IBKR</span>
+        <span class="leg-item"><span class="leg-dot" style="background:var(--blue)"></span>П1 — Yahoo / Google / TV</span>
+        <span class="leg-item" id="f24leg"><span class="leg-dot" style="background:var(--amber)"></span>Freedom24</span>
+      </div>
+      <div style="position:relative;height:280px">
+        <canvas id="pc"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="spread-wrap">
+      <div class="panel-head" style="padding:0 0 12px">Спред методик: П2 − П1 (процентных пункта)</div>
+      <div id="sbars"></div>
+      <div class="spread-note">Положительный → П2 даёт доходность выше. Отрицательный → П1 выше.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Тикер</th>
+          <th style="text-align:right;color:var(--teal-text)">П2 %</th>
+          <th style="text-align:right;color:var(--blue-text)">П1 %</th>
+          <th style="text-align:right;color:var(--amber-text)">F24 %</th>
+          <th style="text-align:center" class="hide-mob">Ближе к</th>
+          <th style="text-align:right">Δ к бл.</th>
+        </tr>
+      </thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+
+  <div class="foot">Цены по состоянию на май 2026. Δ = F24 минус ближайший подход: зелёный ≤0.10 п.п. · жёлтый ≤0.50 · оранжевый ≤1.20 · красный >1.20. «Своя» = разница с обоими подходами >1.2 п.п.</div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const DATA = [{"tk":"NVDA","nm":"Nvidia","type":"stock","n26":180.26,"n28":177,"d31":186.5,"j02":188.85,"now":212.6},{"tk":"GOOGL","nm":"Alphabet","type":"stock","n26":319.95,"n28":320.18,"d31":313,"j02":315.15,"now":388.83},{"tk":"MSFT","nm":"Microsoft","type":"stock","n26":485.5,"n28":492.01,"d31":483.62,"j02":472.94,"now":412.67},{"tk":"AMZN","nm":"Amazon","type":"stock","n26":229.16,"n28":233.22,"d31":230.82,"j02":226.5,"now":271.85},{"tk":"AVGO","nm":"Broadcom","type":"stock","n26":397.57,"n28":402.96,"d31":346.1,"j02":347.62,"now":421.86}];
+const STOCKS=[
+  {tk:'NVDA',nm:'Nvidia',   n26:180.26,n28:177.00,d31:186.50,j02:188.85,now:212.60},
+  {tk:'GOOGL',nm:'Alphabet',n26:319.95,n28:320.18,d31:313.00,j02:315.15,now:388.83},
+  {tk:'MSFT',nm:'Microsoft',n26:485.50,n28:492.01,d31:483.62,j02:472.94,now:412.67},
+  {tk:'AMZN',nm:'Amazon',   n26:229.16,n28:233.22,d31:230.82,j02:226.50,now:271.85},
+  {tk:'AVGO',nm:'Broadcom', n26:397.57,n28:402.96,d31:346.10,j02:347.62,now:421.86},
+];
+const F24={'6M':{NVDA:19.71,GOOGL:19.51,MSFT:-13.38,AMZN:18.40,AVGO:8.79},'YTD':{}};
+const isDark=matchMedia('(prefers-color-scheme: dark)').matches;
+const getVar=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
-const LS_KEY = 'f24_methodology_v2';
-const EMBEDDED_F24 = {"6M":{"NVDA":19.71,"GOOGL":19.51,"MSFT":-13.38,"AMZN":18.4,"AVGO":8.79},"YTD":{}};
-function loadF24() {
-  const base = { '6M': Object.assign({}, EMBEDDED_F24['6M'] || {}), 'YTD': Object.assign({}, EMBEDDED_F24['YTD'] || {}) };
-  try { const r = localStorage.getItem(LS_KEY); if (r) { const ls = JSON.parse(r); base['6M'] = Object.assign(base['6M'], ls['6M'] || {}); base['YTD'] = Object.assign(base['YTD'], ls['YTD'] || {}); } } catch (e) {}
-  return base;
-}
-function saveF24() { try { localStorage.setItem(LS_KEY, JSON.stringify(f24)); } catch (e) {} }
-let f24 = loadF24();
+function pct(now,base){return +((now-base)/base*100).toFixed(2);}
+function fmt(v){return v===null?'—':((v>=0?'+':'')+v.toFixed(2)+'%');}
 
-let period = '6M';
-let scope = 'all';
-
-function refPrices(row) {
-  if (period === '6M') return { a2: row.n26, a1: row.n28 };
-  return { a2: row.d31, a1: row.j02 };
-}
-function fmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
-function fmtSigned(v) { if (Math.abs(v) < 0.005) return '0.00'; return (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(2); }
-function deltaTier(absD) { if (absD <= 0.10) return 'ok'; if (absD <= 0.5) return 's1'; if (absD <= 1.2) return 's2'; return 's3'; }
-
-function scoped() {
-  let d = scope === 'all' ? DATA.slice() : DATA.filter(r => r.type === scope);
-  d = d.map(r => {
-    const { a2, a1 } = refPrices(r);
-    return { ref: r, a2, a1, c1: (r.now - a1) / a1 * 100, c2: (r.now - a2) / a2 * 100 };
+function getData(p){
+  return STOCKS.map(r=>{
+    const a2=p==='6M'?r.n26:r.d31, a1=p==='6M'?r.n28:r.j02;
+    const p2=pct(r.now,a2), p1=pct(r.now,a1);
+    const f24r=F24[p][r.tk], f24=(f24r!==undefined&&f24r!==null)?f24r:null;
+    const d2=f24!==null?+(f24-p2).toFixed(2):null;
+    const d1=f24!==null?+(f24-p1).toFixed(2):null;
+    const closer=(d2!==null&&d1!==null)?(Math.abs(d2)<=Math.abs(d1)?2:1):null;
+    const own=closer!==null&&Math.min(Math.abs(d2),Math.abs(d1))>1.2;
+    const cd=closer===2?d2:d1;
+    return{tk:r.tk,nm:r.nm,p2,p1,f24,d2,d1,closer,own,cd,spread:+(p2-p1).toFixed(2)};
   });
-  d.forEach(o => { o.spread = o.c2 - o.c1; });
-  d.sort((x, y) => Math.abs(y.spread) - Math.abs(x.spread));
-  return d;
 }
 
-function computeRow(o) {
-  const v = f24[period][o.ref.tk];
-  const has = (v !== undefined && v !== null && !isNaN(v));
-  if (!has) return { has: false };
-  const dA1 = v - o.c1, dA2 = v - o.c2;
-  const closer = Math.abs(dA2) <= Math.abs(dA1) ? 2 : 1;
-  const gap = closer === 2 ? dA2 : dA1;
-  const owns = Math.min(Math.abs(dA1), Math.abs(dA2)) > 1.2;
-  return { has: true, v, dA1, dA2, closer, gap, owns };
-}
+const TL6=`<svg width="100%" viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <style>
+    .tl-line{stroke:#888780;stroke-width:1}
+    .tl-zone{fill:#FCEBEB;stroke:#F09595;stroke-width:0.5}
+    .tl-dot-n{fill:#F1EFE8;stroke:#888780;stroke-width:0.5}
+    .tl-dot-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:1.5}
+    .tl-dot-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:1.5}
+    .tl-dot-bnd{fill:#FCEBEB;stroke:#A32D2D;stroke-width:1.5}
+    .tl-badge-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:0.5}
+    .tl-badge-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:0.5}
+    .tl-txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#5F5E5A}
+    .tl-txt-p2{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#085041}
+    .tl-txt-p1{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#185FA5}
+    .tl-txt-bnd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#A32D2D}
+    .tl-ldr{stroke:#888780;stroke-width:0.5;stroke-dasharray:3,2;fill:none}
+    @media(prefers-color-scheme:dark){
+      .tl-zone{fill:#501313;stroke:#F09595}
+      .tl-dot-n{fill:#2C2C2A;stroke:#888780}
+      .tl-dot-p2{fill:#04342C;stroke:#5DCAA5}
+      .tl-dot-p1{fill:#042C53;stroke:#85B7EB}
+      .tl-dot-bnd{fill:#501313;stroke:#E24B4A}
+      .tl-badge-p2{fill:#04342C;stroke:#5DCAA5}
+      .tl-badge-p1{fill:#042C53;stroke:#85B7EB}
+      .tl-txt{fill:#888780}
+      .tl-txt-p2{fill:#9FE1CB}
+      .tl-txt-p1{fill:#85B7EB}
+      .tl-txt-bnd{fill:#F09595}
+      .tl-ldr{stroke:#5F5E5A}
+      .tl-line{stroke:#5F5E5A}
+    }
+  </style>
+</defs>
+<line class="tl-line" x1="40" y1="88" x2="640" y2="88"/>
+<rect class="tl-zone" x="368" y="26" width="56" height="132" rx="4"/>
+<circle class="tl-dot-n" cx="58" cy="88" r="6"/>
+<text class="tl-txt" x="58" y="107" text-anchor="middle">24/11</text>
+<text class="tl-txt" x="58" y="121" text-anchor="middle">Пн</text>
+<circle class="tl-dot-n" cx="170" cy="88" r="6"/>
+<text class="tl-txt" x="170" y="107" text-anchor="middle">25/11</text>
+<text class="tl-txt" x="170" y="121" text-anchor="middle">Вт</text>
+<line class="tl-ldr" x1="282" y1="71" x2="282" y2="60"/>
+<rect class="tl-badge-p2" x="240" y="42" width="84" height="18" rx="4"/>
+<text class="tl-txt-p2" x="282" y="54" text-anchor="middle" dominant-baseline="central">П2 · IBKR</text>
+<circle class="tl-dot-p2" cx="282" cy="88" r="10"/>
+<text class="tl-txt-p2" x="282" y="107" text-anchor="middle">26/11</text>
+<text class="tl-txt-p2" x="282" y="121" text-anchor="middle">Ср</text>
+<circle class="tl-dot-bnd" cx="396" cy="88" r="10"/>
+<text class="tl-txt-bnd" x="396" y="88" text-anchor="middle" dominant-baseline="central" font-size="13">✕</text>
+<text class="tl-txt-bnd" x="396" y="107" text-anchor="middle">27/11</text>
+<text class="tl-txt-bnd" x="396" y="121" text-anchor="middle">Чт</text>
+<text class="tl-txt-bnd" x="396" y="138" text-anchor="middle">нет торгов</text>
+<line class="tl-ldr" x1="510" y1="71" x2="510" y2="60"/>
+<rect class="tl-badge-p1" x="448" y="42" width="124" height="18" rx="4"/>
+<text class="tl-txt-p1" x="510" y="54" text-anchor="middle" dominant-baseline="central">П1 · Yahoo · TV</text>
+<circle class="tl-dot-p1" cx="510" cy="88" r="10"/>
+<text class="tl-txt-p1" x="510" y="107" text-anchor="middle">28/11</text>
+<text class="tl-txt-p1" x="510" y="121" text-anchor="middle">Пт</text>
+<circle class="tl-dot-n" cx="622" cy="88" r="6"/>
+<text class="tl-txt" x="622" y="107" text-anchor="middle">01/12</text>
+<text class="tl-txt" x="622" y="121" text-anchor="middle">Пн</text>
+</svg>`;
 
-function updateDerived(rowEl, o) {
-  const c = computeRow(o);
-  const badge = rowEl.querySelector('.badge');
-  const delta = rowEl.querySelector('.delta');
-  if (!c.has) {
-    badge.className = 'badge none'; badge.textContent = '—';
-    delta.className = 'delta none'; delta.textContent = '—';
-    return;
-  }
-  if (c.owns) { badge.className = 'badge own'; badge.textContent = 'своя'; }
-  else if (c.closer === 2) { badge.className = 'badge b2'; badge.textContent = '≈ П2'; }
-  else { badge.className = 'badge b1'; badge.textContent = '≈ П1'; }
-  delta.className = 'delta ' + deltaTier(Math.abs(c.gap));
-  delta.textContent = fmtSigned(c.gap);
-}
+const TLY=`<svg width="100%" viewBox="0 0 680 175" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <style>
+    .tl-line{stroke:#888780;stroke-width:1}
+    .tl-zone{fill:#FCEBEB;stroke:#F09595;stroke-width:0.5}
+    .tl-dot-n{fill:#F1EFE8;stroke:#888780;stroke-width:0.5}
+    .tl-dot-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:1.5}
+    .tl-dot-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:1.5}
+    .tl-dot-bnd{fill:#FCEBEB;stroke:#A32D2D;stroke-width:1.5}
+    .tl-badge-p2{fill:#E1F5EE;stroke:#0F6E56;stroke-width:0.5}
+    .tl-badge-p1{fill:#E6F1FB;stroke:#185FA5;stroke-width:0.5}
+    .tl-txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#5F5E5A}
+    .tl-txt-p2{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#085041}
+    .tl-txt-p1{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#185FA5}
+    .tl-txt-bnd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;fill:#A32D2D}
+    .tl-ldr{stroke:#888780;stroke-width:0.5;stroke-dasharray:3,2;fill:none}
+    @media(prefers-color-scheme:dark){
+      .tl-zone{fill:#501313;stroke:#F09595}
+      .tl-dot-n{fill:#2C2C2A;stroke:#888780}
+      .tl-dot-p2{fill:#04342C;stroke:#5DCAA5}
+      .tl-dot-p1{fill:#042C53;stroke:#85B7EB}
+      .tl-dot-bnd{fill:#501313;stroke:#E24B4A}
+      .tl-badge-p2{fill:#04342C;stroke:#5DCAA5}
+      .tl-badge-p1{fill:#042C53;stroke:#85B7EB}
+      .tl-txt{fill:#888780}
+      .tl-txt-p2{fill:#9FE1CB}
+      .tl-txt-p1{fill:#85B7EB}
+      .tl-txt-bnd{fill:#F09595}
+      .tl-ldr{stroke:#5F5E5A}
+      .tl-line{stroke:#5F5E5A}
+    }
+  </style>
+</defs>
+<line class="tl-line" x1="40" y1="88" x2="640" y2="88"/>
+<rect class="tl-zone" x="308" y="26" width="64" height="132" rx="4"/>
+<circle class="tl-dot-n" cx="78" cy="88" r="6"/>
+<text class="tl-txt" x="78" y="107" text-anchor="middle">30/12</text>
+<text class="tl-txt" x="78" y="121" text-anchor="middle">Вт</text>
+<line class="tl-ldr" x1="208" y1="71" x2="208" y2="60"/>
+<rect class="tl-badge-p2" x="166" y="42" width="84" height="18" rx="4"/>
+<text class="tl-txt-p2" x="208" y="54" text-anchor="middle" dominant-baseline="central">П2 · IBKR</text>
+<circle class="tl-dot-p2" cx="208" cy="88" r="10"/>
+<text class="tl-txt-p2" x="208" y="107" text-anchor="middle">31/12</text>
+<text class="tl-txt-p2" x="208" y="121" text-anchor="middle">Ср</text>
+<circle class="tl-dot-bnd" cx="340" cy="88" r="10"/>
+<text class="tl-txt-bnd" x="340" y="88" text-anchor="middle" dominant-baseline="central" font-size="13">✕</text>
+<text class="tl-txt-bnd" x="340" y="107" text-anchor="middle">01/01</text>
+<text class="tl-txt-bnd" x="340" y="121" text-anchor="middle">Чт</text>
+<text class="tl-txt-bnd" x="340" y="138" text-anchor="middle">нет торгов</text>
+<line class="tl-ldr" x1="472" y1="71" x2="472" y2="60"/>
+<rect class="tl-badge-p1" x="410" y="42" width="124" height="18" rx="4"/>
+<text class="tl-txt-p1" x="472" y="54" text-anchor="middle" dominant-baseline="central">П1 · Yahoo · TV</text>
+<circle class="tl-dot-p1" cx="472" cy="88" r="10"/>
+<text class="tl-txt-p1" x="472" y="107" text-anchor="middle">02/01</text>
+<text class="tl-txt-p1" x="472" y="121" text-anchor="middle">Пт</text>
+<circle class="tl-dot-n" cx="604" cy="88" r="6"/>
+<text class="tl-txt" x="604" y="107" text-anchor="middle">05/01</text>
+<text class="tl-txt" x="604" y="121" text-anchor="middle">Пн</text>
+</svg>`;
 
-function buildTable() {
-  const data = scoped();
-  const list = document.getElementById('list');
-  let html = '';
-  for (const o of data) {
-    const r = o.ref;
-    const v = f24[period][r.tk];
-    const val = (v !== undefined && v !== null && !isNaN(v)) ? v : '';
-    const title = r.tk + ' — Подход 2: $' + o.a2.toFixed(2) + ' (' + fmtPct(o.c2) + '), Подход 1: $' + o.a1.toFixed(2) + ' (' + fmtPct(o.c1) + ')';
-    html += '<div class="row" data-tk="' + r.tk + '">';
-    html += '<span class="tk" title="' + title + '">' + r.tk + '</span>';
-    html += '<span class="nm hide-mob">' + r.nm + '</span>';
-    html += '<span class="pv hide-mob">' + fmtPct(o.c2) + '</span>';
-    html += '<span class="pv hide-mob">' + fmtPct(o.c1) + '</span>';
-    html += '<input class="f24in" type="number" step="0.01" inputmode="decimal" placeholder="—" data-tk="' + r.tk + '" value="' + val + '">';
-    html += '<span class="badge none">—</span>';
-    html += '<span class="delta none">—</span>';
-    html += '</div>';
-  }
-  list.innerHTML = html;
-  data.forEach(o => {
-    const rowEl = list.querySelector('.row[data-tk="' + o.ref.tk + '"]');
-    updateDerived(rowEl, o);
-  });
-  updateStats();
-}
+let chart=null;
 
-function updateStats() {
-  const data = scoped();
-  const spreads = data.map(o => Math.abs(o.spread));
-  const avgSpread = spreads.length ? spreads.reduce((a, b) => a + b, 0) / spreads.length : 0;
-  let filled = 0, m1 = 0, m2 = 0;
-  data.forEach(o => {
-    const c = computeRow(o);
-    if (c.has) { filled++; if (!c.owns) { if (c.closer === 2) m2++; else m1++; } }
-  });
-  document.getElementById('s-spread').textContent = avgSpread.toFixed(2) + ' п.п.';
-  document.getElementById('s-filled').textContent = filled;
-  document.getElementById('s-total').textContent = data.length;
-  document.getElementById('s-match').textContent = m2 + ' / ' + m1;
-}
-
-function renderEdge() {
-  const edge = document.getElementById('edge');
-  if (period === '6M') {
-    edge.innerHTML = 'Граница 6M — <strong>27 ноября 2025, День благодарения, торгов нет</strong>. Подход 1 берёт первую сессию после границы (28.11, короткая сессия). Подход 2 — последнюю сессию до границы (26.11).';
-  } else {
-    edge.innerHTML = 'Граница YTD — <strong>1 января 2026, Новый год, торгов нет</strong>. Подход 1 берёт первую сессию после границы (02.01). Подход 2 — последнюю сессию до границы (31.12).';
-  }
-}
-
-function renderAll() { renderEdge(); buildTable(); }
-
-document.querySelectorAll('.btn[data-p]').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.btn[data-p]').forEach(x => x.classList.remove('on'));
-    b.classList.add('on'); period = b.dataset.p; renderAll();
-  });
-});
-document.querySelectorAll('.btn[data-s]').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.btn[data-s]').forEach(x => x.classList.remove('on'));
-    b.classList.add('on'); scope = b.dataset.s; renderAll();
-  });
-});
-
-document.getElementById('list').addEventListener('input', e => {
-  const inp = e.target;
-  if (!inp.classList.contains('f24in')) return;
-  const tk = inp.dataset.tk;
-  const raw = inp.value.trim();
-  if (raw === '') { delete f24[period][tk]; }
-  else { const num = parseFloat(raw.replace(',', '.')); if (!isNaN(num)) f24[period][tk] = num; else delete f24[period][tk]; }
-  saveF24();
-  const data = scoped();
-  const o = data.find(x => x.ref.tk === tk);
-  const rowEl = inp.closest('.row');
-  if (o && rowEl) updateDerived(rowEl, o);
-  updateStats();
-});
-
-const ALIASES = {
-  ticker: ['ticker', 'тикер', 'symbol', 'тикер ', 'sym'],
-  n26: ['n26', '26.11', '26.11.2025', 'nov26', '2025-11-26'],
-  n28: ['n28', '28.11', '28.11.2025', 'nov28', '2025-11-28'],
-  d31: ['d31', '31.12', '31.12.2025', 'dec31', '2025-12-31'],
-  j02: ['j02', '02.01', '02.01.2026', 'jan02', '2026-01-02', '2.01'],
-  now: ['now', 'current', 'тек', 'today', '2026-05-26', '26.05', '26.05.2026'],
-  f6: ['f24_6m', 'freedom_6m', 'f6m', 'freedom24_6m', 'f24 6m'],
-  fy: ['f24_ytd', 'freedom_ytd', 'fytd', 'freedom24_ytd', 'f24 ytd']
-};
-
-function setStatus(msg, cls) {
-  const el = document.getElementById('status');
-  el.textContent = msg;
-  el.className = 'status' + (cls ? ' ' + cls : '');
-}
-
-function parseCSV(text) {
-  text = text.replace(/\r/g, '');
-  const lines = text.split('\n').filter(l => l.trim().length);
-  if (!lines.length) throw new Error('пустой файл');
-  const semi = (lines[0].match(/;/g) || []).length;
-  const comm = (lines[0].match(/,/g) || []).length;
-  const delim = semi > comm ? ';' : ',';
-  const decComma = delim === ';';
-  const header = lines[0].split(delim).map(h => h.trim().toLowerCase());
-  const colIdx = key => { for (const a of ALIASES[key]) { const i = header.indexOf(a); if (i >= 0) return i; } return -1; };
-  const idx = { ticker: colIdx('ticker'), n26: colIdx('n26'), n28: colIdx('n28'), d31: colIdx('d31'), j02: colIdx('j02'), now: colIdx('now'), f6: colIdx('f6'), fy: colIdx('fy') };
-  if (idx.ticker < 0) throw new Error('нет колонки ticker');
-  const num = s => {
-    if (s == null) return null; s = String(s).trim(); if (!s) return null;
-    if (decComma) s = s.replace(/\./g, '').replace(',', '.'); else s = s.replace(/,/g, '');
-    const v = parseFloat(s); return isNaN(v) ? null : v;
+function getColors(){
+  const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+  return{
+    p2:dark?'#5DCAA5':'#1D9E75',
+    p1:dark?'#85B7EB':'#378ADD',
+    f24:dark?'#FAC775':'#EF9F27',
+    grid:dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)',
+    tick:dark?'#888780':'#5F5E5A',
   };
-  let updated = 0, added = 0, rows = 0, removed = 0;
-  const kept = [];      // rows in CSV order
-  const csvTickers = new Set();
-  for (let i = 1; i < lines.length; i++) {
-    const cells = lines[i].split(delim);
-    const tk = (cells[idx.ticker] || '').trim().toUpperCase();
-    if (!tk || csvTickers.has(tk)) continue;
-    rows++;
-    csvTickers.add(tk);
-    let row = DATA.find(r => r.tk.toUpperCase() === tk);
-    if (!row) { row = { tk: tk, nm: tk, type: 'csv' }; added++; } else { updated++; }
-    const apply = (key, prop) => { if (idx[key] >= 0) { const val = num(cells[idx[key]]); if (val !== null) row[prop] = val; } };
-    apply('n26', 'n26'); apply('n28', 'n28'); apply('d31', 'd31'); apply('j02', 'j02'); apply('now', 'now');
-    if (idx.f6 >= 0) { const v = num(cells[idx.f6]); if (v !== null) f24['6M'][tk] = v; }
-    if (idx.fy >= 0) { const v = num(cells[idx.fy]); if (v !== null) f24['YTD'][tk] = v; }
-    kept.push(row);
-  }
-  // Оставляем в таблице только тикеры из CSV (в порядке файла)
-  removed = DATA.length - updated;
-  DATA.length = 0;
-  kept.forEach(r => DATA.push(r));
-  saveF24();
-  return { rows, updated, added, removed };
 }
 
-document.getElementById('csv-up').addEventListener('click', () => document.getElementById('csv-file').click());
-document.getElementById('csv-file').addEventListener('change', e => {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const res = parseCSV(ev.target.result);
-      renderAll();
-      setStatus('Строк: ' + res.rows + ' · обновлено: ' + res.updated + ' · добавлено: ' + res.added + ' · убрано вне CSV: ' + res.removed, 'ok');
-    } catch (err) { setStatus('Ошибка: ' + err.message, 'err'); }
-  };
-  reader.onerror = () => setStatus('Не удалось прочитать файл', 'err');
-  reader.readAsText(file, 'utf-8');
-  e.target.value = '';
-});
+function renderChart(data){
+  const C=getColors();
+  const labels=data.map(d=>d.tk);
+  const ds=[
+    {label:'П2 — IBKR',data:data.map(d=>d.p2),backgroundColor:C.p2+'bb',borderColor:C.p2,borderWidth:1,borderRadius:3},
+    {label:'П1 — Yahoo/TV',data:data.map(d=>d.p1),backgroundColor:C.p1+'bb',borderColor:C.p1,borderWidth:1,borderRadius:3},
+    {label:'Freedom24',data:data.map(d=>d.f24),backgroundColor:C.f24+'bb',borderColor:C.f24,borderWidth:1,borderRadius:3},
+  ];
+  if(chart){chart.data.labels=labels;chart.data.datasets=ds;chart.update();return;}
+  chart=new Chart(document.getElementById('pc'),{
+    type:'bar',data:{labels,datasets:ds},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>{const v=c.raw;return c.dataset.label+': '+(v===null?'—':((v>=0?'+':'')+v.toFixed(2)+'%'));}}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:C.tick,font:{size:13}},border:{display:false}},
+        y:{grid:{color:C.grid},ticks:{color:C.tick,font:{size:11},callback:v=>(v>=0?'+':'')+v+'%'},border:{display:false}}
+      }
+    }
+  });
+}
 
-document.getElementById('csv-tpl').addEventListener('click', () => {
-  const head = ['ticker', 'name', 'n26', 'n28', 'd31', 'j02', 'now', 'f24_6m', 'f24_ytd'];
-  const lines = [head.join(',')];
-  for (const r of DATA) {
-    const f6 = f24['6M'][r.tk]; const fy = f24['YTD'][r.tk];
-    lines.push([
-      r.tk, '"' + r.nm + '"',
-      r.n26 != null ? r.n26 : '', r.n28 != null ? r.n28 : '',
-      r.d31 != null ? r.d31 : '', r.j02 != null ? r.j02 : '',
-      r.now != null ? r.now : '',
-      (f6 != null ? f6 : ''), (fy != null ? fy : '')
-    ].join(','));
-  }
-  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
-  try {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'methodology_prices_template.csv';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setStatus('Шаблон выгружен', 'ok');
-  } catch (err) { setStatus('Скачивание недоступно в этом окружении', 'err'); }
-});
+function renderSpreads(data){
+  const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const mx=Math.max(...data.map(d=>Math.abs(d.spread)))||1;
+  document.getElementById('sbars').innerHTML=data.map(d=>{
+    const w=Math.abs(d.spread)/mx*46;
+    const isPos=d.spread>=0;
+    const abs=Math.abs(d.spread);
+    const col=abs<=0.5?(dark?'#5DCAA5':'#1D9E75'):abs<=1.5?(dark?'#FAC775':'#EF9F27'):(dark?'#E24B4A':'#A32D2D');
+    return `<div class="spread-row">
+      <span class="spread-tk">${d.tk}</span>
+      <div class="spread-bar-track">
+        <div class="spread-bar-fill" style="${isPos?'left:50%':'right:50%'};width:${w}%;background:${col}"></div>
+        <div class="spread-center"></div>
+      </div>
+      <span class="spread-val" style="color:${col}">${d.spread>0?'+':''}${d.spread.toFixed(2)} п.п.</span>
+    </div>`;
+  }).join('');
+}
 
-document.getElementById('f24-clr').addEventListener('click', () => {
-  f24[period] = {}; saveF24(); buildTable();
-  setStatus('Freedom24 очищен для периода ' + period, 'ok');
-});
+function deltaSpan(v){
+  if(v===null)return '<span style="color:var(--text3)">—</span>';
+  const a=Math.abs(v);
+  const cls=a<=0.1?'delta-ok':a<=0.5?'delta-s1':a<=1.2?'delta-s2':'delta-s3';
+  return `<span class="${cls}">${v>0?'+':''}${v.toFixed(2)}</span>`;
+}
 
-document.getElementById('snap').addEventListener('click', () => {
-  const prevPeriod = period, prevScope = scope;
-  // Приводим UI к дефолтному состоянию, чтобы запечённый файл открывался единообразно
-  document.getElementById('list').innerHTML = '';
-  const st = document.getElementById('status'); st.textContent = ''; st.className = 'status';
-  document.querySelectorAll('.btn[data-p]').forEach(x => x.classList.toggle('on', x.dataset.p === '6M'));
-  document.querySelectorAll('.btn[data-s]').forEach(x => x.classList.toggle('on', x.dataset.s === 'all'));
+function closerSpan(d){
+  if(d.f24===null)return '<span style="color:var(--text3)">—</span>';
+  if(d.own)return '<span class="badge badge-own">своя</span>';
+  return d.closer===2?'<span class="badge badge-p2">≈ П2</span>':'<span class="badge badge-p1">≈ П1</span>';
+}
 
-  let src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-  // Запекаем текущие цены и значения Freedom24 как новые дефолты
-  src = src.replace(/const DATA = \[[\s\S]*?\];/, 'const DATA = ' + JSON.stringify(DATA) + ';');
-  src = src.replace(/const EMBEDDED_F24 = [^\n]*?;/, 'const EMBEDDED_F24 = ' + JSON.stringify(f24) + ';');
+function renderTable(data){
+  document.getElementById('tb').innerHTML=data.map((d,i)=>{
+    const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+    const p2c=d.p2>=0?(dark?'#5DCAA5':'#0F6E56'):(dark?'#E24B4A':'#A32D2D');
+    const p1c=d.p1>=0?(dark?'#85B7EB':'#185FA5'):(dark?'#E24B4A':'#A32D2D');
+    const f24c=d.f24===null?'var(--text3)':d.f24>=0?(dark?'#FAC775':'#854F0B'):(dark?'#E24B4A':'#A32D2D');
+    return `<tr>
+      <td><div class="tk-name">${d.tk}</div><div class="tk-sub">${d.nm}</div></td>
+      <td class="num" style="color:${p2c}">${fmt(d.p2)}</td>
+      <td class="num" style="color:${p1c}">${fmt(d.p1)}</td>
+      <td class="num" style="color:${f24c}">${fmt(d.f24)}</td>
+      <td style="text-align:center" class="hide-mob">${closerSpan(d)}</td>
+      <td style="text-align:right">${deltaSpan(d.own?null:d.cd)}</td>
+    </tr>`;
+  }).join('');
+}
 
-  // Возвращаем живой вид к тому, что было до экспорта
-  period = prevPeriod; scope = prevScope;
-  document.querySelectorAll('.btn[data-p]').forEach(x => x.classList.toggle('on', x.dataset.p === period));
-  document.querySelectorAll('.btn[data-s]').forEach(x => x.classList.toggle('on', x.dataset.s === scope));
-  renderAll();
+function renderStats(data){
+  const avg=(data.reduce((s,d)=>s+Math.abs(d.spread),0)/data.length).toFixed(2);
+  const filled=data.filter(d=>d.f24!==null).length;
+  const m2=data.filter(d=>d.f24!==null&&!d.own&&d.closer===2).length;
+  const m1=data.filter(d=>d.f24!==null&&!d.own&&d.closer===1).length;
+  document.getElementById('ss').textContent=avg+' п.п.';
+  document.getElementById('sf').textContent=filled+' / '+data.length;
+  document.getElementById('sm').textContent=m2+' / '+m1;
+}
 
-  try {
-    const blob = new Blob([src], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'index.html';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setStatus('Готов общий index.html с данными внутри — задеплойте его, и данные увидят все', 'ok');
-  } catch (err) { setStatus('Скачивание недоступно в этом окружении', 'err'); }
-});
+function sp(p){
+  document.getElementById('b6m').classList.toggle('on',p==='6M');
+  document.getElementById('bY').classList.toggle('on',p==='YTD');
+  document.getElementById('cl').innerHTML=p==='6M'
+    ?'<strong>Граница 6M:</strong> 27 ноября 2025, День благодарения — торгов нет.<br>П2 берёт закрытие <strong>26.11.2025</strong> (последняя сессия до праздника). П1 берёт <strong>28.11.2025</strong> (первая сессия после, укороченная).'
+    :'<strong>Граница YTD:</strong> 1 января 2026, Новый год — торгов нет.<br>П2 берёт закрытие <strong>31.12.2025</strong> (последняя сессия до праздника). П1 берёт <strong>02.01.2026</strong> (первая сессия после).';
+  document.getElementById('tlw').innerHTML=p==='6M'?TL6:TLY;
+  document.getElementById('f24leg').style.opacity=p==='6M'?'1':'0.4';
+  const data=getData(p);
+  renderStats(data); renderChart(data); renderSpreads(data); renderTable(data);
+}
 
-renderAll();
+sp('6M');
 </script>
-
-
-</body></html>
+</body>
+</html>
