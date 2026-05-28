@@ -3,121 +3,328 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Анализ методологий доходности</title>
+<title>Симуляция методологий: праздничный переход (6M)</title>
 <style>
 :root {
-  --bg:#F8F7F2; --surf:#FFFFFF; --text:#1A1A18; --accent:#1D9E75;
-  --p1-col:#378ADD; --p2-col:#1D9E75; --f24-col:#EF9F27;
-  --border:rgba(0,0,0,0.08); --radius:12px;
+  --bg: #121214; --surf: #1a1a1e; --surf2: #26262b;
+  --text: #f3f4f6; --text2: #9ca3af; --text3: #6b7280;
+  --border: rgba(255,255,255,0.08); --border-focus: rgba(255,255,255,0.2);
+  --p2: #10b981; --p2-bg: rgba(16,185,129,0.1);
+  --p1: #3b82f6; --p1-bg: rgba(59,130,246,0.1);
+  --f24: #f59e0b; --f24-bg: rgba(245,158,11,0.1);
+  --danger: #ef4444;
+  --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
 }
-body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 40px 20px; line-height: 1.5; }
-.container { max-width: 900px; margin: 0 auto; }
-.card { background: var(--surf); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f8f9fa; --surf: #ffffff; --surf2: #f1f3f5;
+    --text: #1a1a1a; --text2: #495057; --text3: #adb5bd;
+    --border: rgba(0,0,0,0.08); --border-focus: rgba(0,0,0,0.15);
+    --p2: #059669; --p2-bg: rgba(5,150,105,0.08);
+    --p1: #2563eb; --p1-bg: rgba(37,99,235,0.08);
+    --f24: #d97706; --f24-bg: rgba(217,119,6,0.08);
+  }
+}
 
-/* Улучшенные заголовки */
-h1 { font-size: 24px; margin-bottom: 8px; }
-.subtitle { color: #666; margin-bottom: 24px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; line-height: 1.5; padding: 32px 16px; }
+.wrap { max-width: 1000px; margin: 0 auto; }
 
-/* Карточка выбранного тикера */
-.ticker-hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-.val-box { border-left: 4px solid var(--border); padding-left: 15px; }
-.val-label { font-size: 12px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; }
-.val-big { font-size: 28px; font-weight: 700; font-family: monospace; }
+/* Header & Ticker Selector */
+header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 4px; }
+.lead { color: var(--text2); max-width: 600px; }
+.tk-grid { display: flex; gap: 6px; background: var(--surf); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+.tk-btn { background: transparent; border: none; color: var(--text2); padding: 6px 14px; font-family: var(--mono); font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.15s; }
+.tk-btn:hover { color: var(--text); background: var(--surf2); }
+.tk-btn.active { background: var(--text); color: var(--bg); }
 
-/* Таблица */
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th { text-align: left; font-size: 12px; color: #888; padding: 12px; border-bottom: 2px solid var(--border); }
-td { padding: 12px; border-bottom: 1px solid var(--border); }
-tr:hover { background: #fdfdfd; cursor: pointer; }
-.selected { background: #f0f7f4 !important; }
+/* Paradox Insight Box */
+.insight-box { background: var(--surf); border-left: 3px solid var(--p1); border-radius: 4px; padding: 16px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; border: 1px solid var(--border); border-left: 4px solid var(--p1); }
+.insight-text strong { color: var(--p2); }
 
-.badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+/* Dashboard Grid */
+.grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; margin-bottom: 24px; }
+@media (max-width: 850px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.panel { background: var(--surf); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.panel-hd { padding: 14px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.02); }
+
+/* Timelines (Pure CSS/HTML layout) */
+.timeline-container { padding: 20px 16px; display: flex; flex-direction: column; gap: 24px; }
+.tl-row { display: grid; grid-template-columns: repeat(6, 1fr); position: relative; padding-top: 20px; }
+.tl-row::before { content: ''; position: absolute; top: 25px; left: 8%; right: 8%; height: 2px; background: var(--border); z-index: 1; }
+.tl-step { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 2; }
+.tl-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--surf2); border: 2px solid var(--text3); margin-bottom: 8px; transition: 0.2s; }
+.tl-step.p2 .tl-dot { background: var(--p2-bg); border-color: var(--p2); width: 16px; height: 16px; }
+.tl-step.p1 .tl-dot { background: var(--p1-bg); border-color: var(--p1); width: 16px; height: 16px; }
+.tl-step.holiday .tl-dot { background: var(--surf); border-color: var(--danger); text-align: center; line-height: 8px; font-size: 9px; color: var(--danger); font-weight: bold; }
+.tl-date { font-family: var(--mono); font-size: 11px; color: var(--text); }
+.tl-day { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.tl-price { font-family: var(--mono); font-weight: 600; font-size: 12px; margin-top: 2px; }
+.tl-badge { position: absolute; top: -18px; font-size: 9px; font-weight: 700; padding: 1px 4px; border-radius: 3px; white-space: nowrap; }
+.p2 .tl-badge { background: var(--p2-bg); color: var(--p2); }
+.p1 .tl-badge { background: var(--p1-bg); color: var(--p1); }
+
+/* Summary Strips */
+.strip-group { display: flex; border-top: 1px solid var(--border); }
+.strip { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid var(--border); }
+.strip:last-child { border-right: none; }
+.strip-lbl { font-size: 11px; color: var(--text2); }
+.strip-val { font-family: var(--mono); font-size: 16px; font-weight: 600; }
+
+/* Table Styling */
+table { width: 100%; border-collapse: collapse; font-family: var(--mono); }
+th, td { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--border); }
+th:first-child, td:first-child { text-align: left; font-family: sans-serif; }
+th { font-family: sans-serif; font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 600; background: rgba(0,0,0,0.01); }
+tbody tr { cursor: pointer; transition: 0.15s; }
+tbody tr:hover { background: var(--surf2); }
+tbody tr.selected { background: var(--border); }
+.num-pos { color: var(--p2); }
+.num-neg { color: var(--danger); }
+
+/* Badges */
+.badge { font-family: sans-serif; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; display: inline-block; }
+.b-p2 { background: var(--p2-bg); color: var(--p2); }
+.b-p1 { background: var(--p1-bg); color: var(--p1); }
+.b-own { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+.chart-container { padding: 16px; height: 240px; position: relative; }
+.footer { margin-top: 24px; color: var(--text3); font-size: 11px; text-align: center; }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Симуляция методологий</h1>
-  <p class="subtitle">Сравнение расчета доходности через праздничные разрывы (6M).</p>
-
-  <div class="card" id="hero-card">
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Симуляция методологий — праздничные стыки (6M)</h1>
+      <p class="lead">Граница периода: <strong>27.11.2025</strong> (День благодарения). Перекос расчетов из-за выбора опорных свечей.</p>
     </div>
+    <div class="tk-grid" id="ticker-selector"></div>
+  </header>
 
-  <div class="card">
-    <h3>Выбор тикера</h3>
-    <div id="tkbtns" style="display: flex; gap: 10px; margin-top: 10px;"></div>
+  <div class="insight-box">
+    <div class="insight-text">
+      <strong>Парадокс визуализации:</strong> Yahoo Finance и TradingView строят таймлайн от первой свечи после праздника <strong>(П1)</strong>. Однако математический расчет доходности («+X%» в интерфейсе) они де-факто считают от закрытия до праздника <strong>(П2)</strong>. Цифра на графике НЕ соответствует его первой точке. Freedom24 считает данные по внутренним неявным отсечкам.
+    </div>
   </div>
 
-  <div class="card">
-    <h3>Сравнение данных</h3>
-    <table id="main-table">
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-hd">Опорные точки выбранного тикера</div>
+      <div class="timeline-container">
+        
+        <div>
+          <span style="font-size:11px; font-weight:600; color:var(--text2)">Переход 1: День благодарения (Узкий разрыв, 1 день)</span>
+          <div class="tl-row" id="tl-thx"></div>
+        </div>
+
+        <div>
+          <span style="font-size:11px; font-weight:600; color:var(--text2)">Переход 2: Новогодний кластер (Широкий разрыв, несколько дней)</span>
+          <div class="tl-row" id="tl-ny"></div>
+        </div>
+
+      </div>
+      
+      <div class="strip-group" id="strips-data"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">Доходность 6M (%) и положение Freedom24</div>
+      <div class="chart-container">
+        <canvas id="spreadChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd">Сводный анализ по рынку</div>
+    <table>
       <thead>
         <tr>
-          <th>Тикер</th>
-          <th>П2 (IBKR)</th>
-          <th>П1 (График)</th>
-          <th>Freedom24</th>
-          <th>Спред</th>
+          <th>Тикер / Компания</th>
+          <th>П2 % <span style="font-weight:normal; text-transform:none; color:var(--text3)">(IBKR/Расчет Yahoo)</span></th>
+          <th>П1 % <span style="font-weight:normal; text-transform:none; color:var(--text3)">(График Yahoo/TV)</span></th>
+          <th>Freedom24 %</th>
+          <th>Спред (п.п.)</th>
+          <th>Схождение F24</th>
         </tr>
       </thead>
-      <tbody id="tb"></tbody>
+      <tbody id="table-body"></tbody>
     </table>
+  </div>
+
+  <div class="footer">
+    Данные актуализированы по состоянию на май 2026 года. Расчет доходности за 6 месяцев ведется от базовых точек ноября 2025 г.
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// (Логика данных остается прежней, адаптирован рендеринг)
-const STOCKS=[
-  {tk:'NVDA',nm:'Nvidia',n26:180.26,n28:177.00,now:212.60},
-  {tk:'GOOGL',nm:'Alphabet',n26:319.95,n28:320.18,now:388.83},
-  {tk:'MSFT',nm:'Microsoft',n26:485.50,n28:492.01,now:412.67},
-  {tk:'AMZN',nm:'Amazon',n26:229.16,n28:233.22,now:271.85},
-  {tk:'AVGO',nm:'Broadcom',n26:397.57,n28:402.96,now:421.86}
+const STOCKS = [
+  {tk:'NVDA', nm:'Nvidia Corporation', n26:180.26, n28:177.00, d31:186.50, j02:188.85, now:212.60},
+  {tk:'GOOGL',nm:'Alphabet Inc.',      n26:319.95, n28:320.18, d31:313.00, j02:315.15, now:388.83},
+  {tk:'MSFT', nm:'Microsoft Corp.',    n26:485.50, n28:492.01, d31:483.62, j02:472.94, now:412.67},
+  {tk:'AMZN', nm:'Amazon.com Inc.',    n26:229.16, n28:233.22, d31:230.82, j02:226.50, now:271.85},
+  {tk:'AVGO', nm:'Broadcom Inc.',      n26:397.57, n28:402.96, d31:346.10, j02:347.62, now:421.86},
 ];
-const F24={NVDA:19.71,GOOGL:19.51,MSFT:-13.38,AMZN:18.40,AVGO:8.79};
-let sel='NVDA';
+const F24 = {NVDA:19.71, GOOGL:19.51, MSFT:-13.38, AMZN:18.40, AVGO:8.79};
+let sel = 'NVDA';
+let chartInstance = null;
 
-function pct(n,b){ return +((n-b)/b*100).toFixed(2); }
+function pct(n, b) { return +((n - b) / b * 100).toFixed(2); }
+function isDark() { return window.matchMedia('(prefers-color-scheme: dark)').matches; }
 
-function render() {
-  const data = STOCKS.map(s => ({
-    ...s, 
-    p2: pct(s.now, s.n26), 
-    p1: pct(s.now, s.n28), 
-    f24: F24[s.tk]
-  }));
-
-  const active = data.find(d => d.tk === sel);
-
-  // Рендер Hero
-  document.getElementById('hero-card').innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div><h2>${active.tk} <span style="color:#888; font-size:18px;">${active.nm}</span></h2></div>
-        <div class="ticker-hero">
-            <div class="val-box" style="border-color:var(--p2-col)"><div class="val-label">П2 (IBKR)</div><div class="val-big">${active.p2}%</div></div>
-            <div class="val-box" style="border-color:var(--p1-col)"><div class="val-label">П1 (График)</div><div class="val-big">${active.p1}%</div></div>
-        </div>
-    </div>
-  `;
-
-  // Рендер кнопок
-  document.getElementById('tkbtns').innerHTML = STOCKS.map(s => 
-    `<button onclick="sel='${s.tk}'; render()" style="padding:8px 16px; cursor:pointer; border-radius:6px; border:1px solid var(--border); ${s.tk===sel?'background:var(--p2-col); color:white;':''}">${s.tk}</button>`
-  ).join('');
-
-  // Рендер таблицы
-  document.getElementById('tb').innerHTML = data.map(d => `
-    <tr class="${d.tk===sel?'selected':''}" onclick="sel='${d.tk}'; render()">
-      <td><strong>${d.tk}</strong></td>
-      <td>${d.p2}%</td>
-      <td>${d.p1}%</td>
-      <td>${d.f24}%</td>
-      <td><span class="badge" style="background:#eee">${(d.p2-d.p1).toFixed(2)}%</span></td>
-    </tr>
-  `).join('');
+function calcMarketData() {
+  return STOCKS.map(s => {
+    const p2 = pct(s.now, s.n26);
+    const p1 = pct(s.now, s.n28);
+    const f24 = F24[s.tk];
+    const spread = +(p2 - p1).toFixed(2);
+    
+    let closer = 'Своя';
+    if (f24 !== undefined) {
+      const d2 = Math.abs(f24 - p2);
+      const d1 = Math.abs(f24 - p1);
+      if (Math.min(d2, d1) <= 1.2) {
+        closer = d2 <= d1 ? '≈ П2' : '≈ П1';
+      }
+    }
+    return { ...s, p2, p1, f24, spread, closer };
+  });
 }
 
-render();
+function renderSelectors() {
+  document.getElementById('ticker-selector').innerHTML = STOCKS.map(s => 
+    `<button class="tk-btn ${s.tk === sel ? 'active' : ''}" onclick="selectTicker('${s.tk}')">${s.tk}</button>`
+  ).join('');
+}
+
+function renderTimelines(active) {
+  const thxData = [
+    {d:'24/11', w:'Пн', t:'n',   p: active.n26}, // условный шаг
+    {d:'25/11', w:'Вт', t:'n',   p: active.n26},
+    {d:'26/11', w:'Ср', t:'p2',  p: active.n26, b: 'П2 (IBKR)'},
+    {d:'27/11', w:'Чт', t:'holiday', p: 0, b: '✕'},
+    {d:'28/11', w:'Пт', t:'p1',  p: active.n28, b: 'П1 (График)'},
+    {d:'01/12', w:'Пн', t:'n',   p: active.now}
+  ];
+
+  const nyData = [
+    {d:'25/12', w:'Чт', t:'holiday', p: 0, b: '✕'},
+    {d:'30/12', w:'Вт', t:'n',   p: active.d31},
+    {d:'31/12', w:'Ср', t:'p2',  p: active.d31, b: 'П2 (IBKR)'},
+    {d:'01/01', w:'Чт', t:'holiday', p: 0, b: '✕'},
+    {d:'02/01', w:'Пт', t:'p1',  p: active.j02, b: 'П1 (График)'},
+    {d:'05/01', w:'Пн', t:'n',   p: active.now}
+  ];
+
+  const buildHtml = arr => arr.map(x => `
+    <div class="tl-step ${x.t}">
+      ${x.b ? `<div class="tl-badge">${x.b}</div>` : ''}
+      <div class="tl-day">${x.w}</div>
+      <div class="tl-dot">${x.t==='holiday'?'✕':''}</div>
+      <div class="tl-date">${x.d}</div>
+      <div class="tl-price">${x.t==='holiday' ? 'Закрыто' : '$'+x.p.toFixed(1)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('tl-thx').innerHTML = buildHtml(thxData);
+  document.getElementById('tl-ny').innerHTML = buildHtml(nyData);
+}
+
+function renderStrips(mRow) {
+  const format = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+  document.getElementById('strips-data').innerHTML = `
+    <div class="strip"><div class="strip-lbl">Доходность по П2</div><div class="strip-val" style="color:var(--p2)">${format(mRow.p2)}</div></div>
+    <div class="strip"><div class="strip-lbl">Доходность по П1</div><div class="strip-val" style="color:var(--p1)">${format(mRow.p1)}</div></div>
+    <div class="strip"><div class="strip-lbl">Расхождение (Спред)</div><div class="strip-val">${mRow.spread > 0 ? '+' : ''}${mRow.spread.toFixed(2)} п.п.</div></div>
+  `;
+}
+
+function renderTable(marketData) {
+  const format = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+  document.getElementById('table-body').innerHTML = marketData.map(d => {
+    const isSel = d.tk === sel ? 'class="selected"' : '';
+    const badgeClass = d.closer === '≈ П2' ? 'b-p2' : d.closer === '≈ П1' ? 'b-p1' : 'b-own';
+    return `
+      <tr ${isSel} onclick="selectTicker('${d.tk}')">
+        <td style="text-align:left"><strong>${d.tk}</strong> <span style="color:var(--text3); margin-left:4px">${d.nm}</span></td>
+        <td class="${d.p2 >= 0 ? 'num-pos' : 'num-neg'}">${format(d.p2)}</td>
+        <td class="${d.p1 >= 0 ? 'num-pos' : 'num-neg'}">${format(d.p1)}</td>
+        <td style="font-weight:600" class="${d.f24 >= 0 ? 'num-pos' : 'num-neg'}">${format(d.f24)}</td>
+        <td>${d.spread > 0 ? '+' : ''}${d.spread.toFixed(2)}</td>
+        <td><span class="badge ${badgeClass}">${d.closer}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderChart(marketData) {
+  const active = marketData.find(d => d.tk === sel);
+  const ctx = document.getElementById('spreadChart').getContext('2d');
+  
+  const gridColor = isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  const textColor = isDark() ? '#9ca3af' : '#495057';
+
+  const chartData = {
+    labels: ['П1 (График)', 'Freedom24', 'П2 (Расчет)'],
+    datasets: [{
+      data: [active.p1, active.f24, active.p2],
+      backgroundColor: [isDark() ? '#1d4ed8' : '#3b82f6', isDark() ? '#b45309' : '#f59e0b', isDark() ? '#047857' : '#10b981'],
+      borderRadius: 4,
+      barThickness: 24
+    }]
+  };
+
+  if (chartInstance) {
+    chartInstance.data = chartData;
+    chartInstance.options.scales.x.ticks.color = textColor;
+    chartInstance.options.scales.y.ticks.color = textColor;
+    chartInstance.options.scales.x.grid.color = gridColor;
+    chartInstance.update();
+    return;
+  }
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: chartData,
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono' } } },
+        y: { grid: { display: false }, ticks: { color: textColor, font: { size: 12 } } }
+      }
+    }
+  });
+}
+
+function selectTicker(ticker) {
+  sel = ticker;
+  updateApp();
+}
+
+function updateApp() {
+  const marketData = calcMarketData();
+  const activeStock = STOCKS.find(s => s.tk === sel);
+  const activeMarket = marketData.find(d => d.tk === sel);
+
+  renderSelectors();
+  renderTimelines(activeStock);
+  renderStrips(activeMarket);
+  renderTable(marketData);
+  renderChart(marketData);
+}
+
+// Отслеживание смены системной темы для динамического обновления графика
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateApp);
+
+updateApp();
 </script>
 </body>
 </html>
